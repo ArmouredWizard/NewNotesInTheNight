@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Notes in the Night</string>
+    <string name="scoundrel_entry">Enter Scoundrel Details</string>
+    <string name="scoundrel_list">List of Scoundrels</string>
+    <string name="save_action">SAVE</string>
+    <string name="scoundrel_detail_title">Scoundrel Details</string>
+    <string name="scoundrel_edit_title">Edit Scoundrel</string>
+    <string name="crew_list">Crew List</string>
+    <string name="crew_detail_title">Crew Details</string>
+    <string name="tier_info">Tier is how powerful your Crew is, compared to other Factions.\nWeak Hold is a tenuous position, easily lost\nString Hold is a secure position</string>
+    <string name="reputation_info">Rep determines how close your Crew is to gaining Tier</string>
+    <string name="heat_info">Heat is the amount of attention you attract from the authorities</string>
+    <string name="crew_entry">Enter Crew Details</string>
+    <string name="contact_list">List of Contacts</string>
+    <string name="crew_edit_title">Edit Crew Details</string>
+    <string name="ability_list">List of Special Abilities and Upgrades</string>
+    <string name="notes_list">List of Notes</string>
+    <string name="all__note_categories">All Categories</string>
+</resources>
