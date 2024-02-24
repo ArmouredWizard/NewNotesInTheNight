@@ -15,5 +15,5 @@
     <string name="crew_edit_title">Edit Crew Details</string>
     <string name="ability_list">List of Special Abilities and Upgrades</string>
     <string name="notes_list">List of Notes</string>
-    <string name="all__note_categories">All Categories</string>
+    <string name="all_note_categories">All Categories</string>
 </resources>

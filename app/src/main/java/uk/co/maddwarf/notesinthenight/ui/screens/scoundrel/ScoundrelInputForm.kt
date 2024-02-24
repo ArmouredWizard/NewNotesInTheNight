@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -92,7 +93,8 @@ fun ScoundrelInputForm(
         }
     }
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .padding(start = 10.dp, end = 10.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -338,6 +340,7 @@ fun CrewBlock(
                 leadingIcon = Icons.Default.Add
             )
         }
+        Spacer(modifier = Modifier.width(5.dp))
         Row(
             modifier = Modifier.weight(1f)
         ) {
@@ -515,6 +518,7 @@ fun SpecialAbilityBlock(
                 leadingIcon = Icons.Default.Add
             )
         }
+        Spacer(modifier = Modifier.width(5.dp))
         Row(
             modifier = Modifier.weight(1f)
         ) {
@@ -645,6 +649,7 @@ fun ContactsBlock(
                 leadingIcon = Icons.Default.Add
             )
         }
+        Spacer(modifier = Modifier.width(5.dp))
         Row(
             modifier = Modifier.weight(1f)
         ) {

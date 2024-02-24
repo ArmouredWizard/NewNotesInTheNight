@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -51,19 +53,19 @@ fun NameAndDescrEntryDialog(
                     .padding(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TitleBlock(title = "", text = title)//todo GENERIC - pass in text to display!!!
+                TitleBlock(title = "", text = title)
                 TextEntryRowWithInfoIcon(
                     data = name,
                     onValueChange = onNameChange,
                     label = nameLabel,
-                    infoText = nameHint//todo improve info text
+                    infoText = nameHint
                 )
                 TextEntryRowWithInfoIcon(
                     singleLine = false,
                     data = description,
                     onValueChange = onDescriptionChange,
                     label = descriptionLabel,
-                    infoText = descriptionHint //todo improve info text
+                    infoText = descriptionHint
                 )
 
                 Row(
@@ -77,6 +79,7 @@ fun NameAndDescrEntryDialog(
                     ) {
                         MyButton(onClick = onDismiss, text = "Cancel")
                     }
+                    Spacer(modifier = Modifier.width(5.dp))
                     Row(
                         modifier = Modifier.weight(1f),
                         horizontalArrangement = Arrangement.Center

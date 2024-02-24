@@ -105,7 +105,7 @@ fun HomeBody(
                 onClick = navigateToAbilitiesList,
             )
             MyButton(
-                text = "General Notes",
+                text = "Notes",
                 onClick = navigateToGeneralNotesList,
             )
 

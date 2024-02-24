@@ -22,7 +22,7 @@ fun MyButton(
     text: String,
 ) {
     Button(
-        modifier = modifier.fillMaxWidth(.9f),
+        modifier = modifier.fillMaxWidth(),
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         border = BorderStroke(width = 1.dp, color = Color.Black),

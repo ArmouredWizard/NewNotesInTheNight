@@ -1,5 +1,6 @@
 package uk.co.maddwarf.notesinthenight.ui.screens.notes
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,18 +38,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.newFixedThreadPoolContext
 import uk.co.maddwarf.notesinthenight.NotesInTheNightTopAppBar
 import uk.co.maddwarf.notesinthenight.R
 import uk.co.maddwarf.notesinthenight.model.Note
+import uk.co.maddwarf.notesinthenight.model.Tag
 import uk.co.maddwarf.notesinthenight.navigation.NavigationDestination
 import uk.co.maddwarf.notesinthenight.ui.composables.DeleteConfirmationDialog
 import uk.co.maddwarf.notesinthenight.ui.composables.InfoPopUp
 import uk.co.maddwarf.notesinthenight.ui.composables.MySpinner
-import uk.co.maddwarf.notesinthenight.ui.composables.NameAndDescrEntryDialog
-import uk.co.maddwarf.notesinthenight.ui.composables.NoteItem
+import uk.co.maddwarf.notesinthenight.ui.composables.note.NoteItem
+import uk.co.maddwarf.notesinthenight.ui.composables.note.NoteEntryDialog
 
 object NotesListDestination : NavigationDestination {
-    override val route = "otes_list"
+    override val route = "notes_list"
     override val titleRes = R.string.notes_list
 }
 
@@ -59,10 +62,13 @@ fun NotesListScreen(
     onNavigateUp: () -> Unit,
     notesListViewModel: NotesListViewModel = hiltViewModel()
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val coroutineScope = rememberCoroutineScope()
 
     val uiState by notesListViewModel.notesListUiState.collectAsState()
+
+    val tagsList by notesListViewModel.getNotesTags.collectAsState(initial = listOf())
+
+    var displayEditNoteDialog by remember { mutableStateOf(false) }
 
     var newNote by remember { mutableStateOf(Note()) }
     var showAddNoteDialog by remember { mutableStateOf(false) }
@@ -70,12 +76,69 @@ fun NotesListScreen(
         showAddNoteDialog = !showAddNoteDialog
     }
 
-    fun onNoteChange(noteName: String) {
+    fun onNoteTitleChange(noteName: String) {
         newNote = newNote.copy(title = noteName)
     }
 
-    fun onDescriptionChange(noteBody: String) {
+    fun onNoteBodyChange(noteBody: String) {
         newNote = newNote.copy(body = noteBody)
+    }
+
+    var newtag by remember{ mutableStateOf("") }
+
+    fun onNoteCategoryChange(noteCategory: String) {
+        newtag = noteCategory
+    }
+
+    fun showEditNote(note: Note) {
+        newNote = note
+        newtag = ""
+        displayEditNoteDialog = !displayEditNoteDialog
+    }
+
+    fun doNewNote(note: Note) {
+        Log.d("NEW NOTE", note.toString())
+        showAddNoteDialog = false
+        coroutineScope.launch {
+            notesListViewModel.saveNote(note)
+        }
+        newNote = Note()
+        newtag = ""
+    }
+
+    fun doEditNote(note: Note) {
+        Log.d("EDIT NOTE", note.toString())
+        displayEditNoteDialog = false
+        coroutineScope.launch {
+            notesListViewModel.saveEditedNote(note)
+        }
+        newNote = Note()
+    }
+
+    fun onTagAdd(tag:String){
+        //newNote.tags.add(Tag(tag = tag))
+        newNote = newNote.copy(tags = (newNote.tags+Tag(tag = tag)).toMutableList())
+        newtag = ""
+    }
+
+    if (displayEditNoteDialog) {
+        NoteEntryDialog(
+            noteId = newNote.noteId,
+            title = newNote.title,
+            body = newNote.body,
+            tags = newNote.tags,
+            newTag = newtag,
+            onDismiss = {
+                displayEditNoteDialog = false
+                newNote = Note()
+            },
+            onAccept = { doEditNote(it) },
+            onTitleChange = { onNoteTitleChange(it) },
+            onBodyChange = { onNoteBodyChange(it) },
+            onCategoryChange = { onNoteCategoryChange(it) },
+            tagsList = tagsList,
+            onTagAdd = {onTagAdd(it)}
+        )
     }
 
     fun doNewNoteFromPair(info: Pair<String, String>) {
@@ -92,31 +155,34 @@ fun NotesListScreen(
     }
 
     if (showAddNoteDialog) {
-        NameAndDescrEntryDialog(
-            title = "New Note",
-            name = newNote.title,
-            nameLabel = "Note Title",
-            nameHint = "Title for this Note",
-            description = newNote.body,
-            descriptionLabel = "Note Body",
-            descriptionHint = "The main text for this Note",
-            onDismiss = { showAddNoteDialog = !showAddNoteDialog },
-            onAccept = { doNewNoteFromPair(it) },
-            onNameChange = { onNoteChange(it) },
-            onDescriptionChange = { onDescriptionChange(it) },
+        NoteEntryDialog(
+            noteId = 0,
+            title = newNote.title,
+            body = newNote.body,
+            tags = newNote.tags,
+            newTag = newtag,
+            onDismiss = {
+                showAddNoteDialog = false
+                newNote = Note()
+                        },
+            onAccept = { doNewNote(it) },
+            onTitleChange = { onNoteTitleChange(it) },
+            onBodyChange = { onNoteBodyChange(it) },
+            onCategoryChange = { onNoteCategoryChange(it) },
+            tagsList = tagsList,
+            onTagAdd = { onTagAdd(it) }
         )
-
     }
 
 
+
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier,
         topBar = {
             NotesInTheNightTopAppBar(
                 title = "List of Notes",
                 canNavigateBack = true,
                 navigateUp = onNavigateUp,
-                scrollBehavior = scrollBehavior,
                 navigateToHome = navigateToHome
             )
         },
@@ -135,17 +201,19 @@ fun NotesListScreen(
     ) { innerPadding ->
         GeneralNotesListBody(
             notesList = uiState.list,
+            tagsList = tagsList,
             onItemClick = {},//todo 
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
             deleteNote = {
                 notesListViewModel.deleteNote(it)
-            }
+            },
+            showEditNote = { showEditNote(it) }
         )
     }//end Scaffold
 
-}//end General N ote List Screen
+}//end General Note List Screen
 
 @Composable
 fun GeneralNotesListBody(
@@ -153,6 +221,8 @@ fun GeneralNotesListBody(
     onItemClick: () -> Unit,
     modifier: Modifier,
     deleteNote: (Note) -> Unit,
+    tagsList: List<Tag>,
+    showEditNote: (Note) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -171,6 +241,8 @@ fun GeneralNotesListBody(
         displayDeleteNoteDialog = !displayDeleteNoteDialog
     }
 
+
+
     if (displayDeleteNoteDialog) {
         DeleteConfirmationDialog(
             title = "Note",
@@ -183,6 +255,7 @@ fun GeneralNotesListBody(
     var showNotePopUp by remember { mutableStateOf(false) }
     var chosenNoteToShow by remember { mutableStateOf(Note()) }
     fun doNotePopUp(note: Note) {
+        Log.d("NOTE", note.toString())
         chosenNoteToShow = note
         showNotePopUp = !showNotePopUp
     }
@@ -198,15 +271,10 @@ fun GeneralNotesListBody(
         )
     }
 
-    val unfilteredTitle = stringResource(R.string.all__note_categories)
+    val unfilteredTitle = stringResource(R.string.all_note_categories)
     var chosenCategory by remember { mutableStateOf(unfilteredTitle) }
-    val categoryList = mutableListOf<String>()
-    notesList.forEach { crew ->
-        if (crew.category != "") {
-            categoryList.add(crew.category)
-        }
-    }
-    categoryList.add(unfilteredTitle)
+    val categoryList: MutableList<Tag> = mutableListOf(Tag(tag = unfilteredTitle))
+    categoryList.addAll(tagsList)
 
     var categoryFilterExpanded by remember { mutableStateOf(false) }
 
@@ -223,7 +291,9 @@ fun GeneralNotesListBody(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
         ) {
 
             Row(
@@ -234,16 +304,30 @@ fun GeneralNotesListBody(
                 MySpinner(
                     expanded = categoryFilterExpanded,
                     onClick = { categoryFilterExpanded = !categoryFilterExpanded },
-                    list = categoryList,
+                    list = categoryList.map {
+                        it.tag
+                    }.distinct(),
                     chooser = ::noteCategoryChooser,
                     report = chosenCategory
                 )
             }
 
-            val filteredNoteList = if (chosenCategory == unfilteredTitle) {
-                notesList
+
+            var filteredNoteList: MutableList<Note> = mutableListOf()
+
+            if (chosenCategory == unfilteredTitle) {
+                filteredNoteList = notesList.toMutableList()
             } else {
-                notesList.filter { it.category == chosenCategory }.distinct().toMutableList()
+                // notesList.filter { it.tags.contains(chosenCategory) }.distinct().toMutableList()
+
+                notesList.forEach { note ->
+                    note.tags.forEach { tag ->
+                        if (tag.tag == chosenCategory) {
+                            filteredNoteList.add(note)
+                        }
+                    }
+                }
+                filteredNoteList.distinct()
             }
 
             if (notesList.isEmpty()) {
@@ -255,12 +339,13 @@ fun GeneralNotesListBody(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(items = filteredNoteList, key = { it.noteId }) { item ->
+                    items(items = filteredNoteList/*, key = { it.noteId }*/) { item ->
                         NoteItem(
                             note = item,
                             modifier = Modifier
                                 .padding(6.dp),
                             displayDeleteNoteDialog = { showDeleteNote(item) },
+                            displayEditNoteDialog = { showEditNote(item) },
                             onClick = { doNotePopUp(item) }
                         )
                     }

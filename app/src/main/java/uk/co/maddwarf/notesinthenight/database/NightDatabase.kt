@@ -12,10 +12,12 @@ import uk.co.maddwarf.notesinthenight.database.entities.CrewEntity
 import uk.co.maddwarf.notesinthenight.database.entities.CrewUpgradeCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.CrewUpgradeEntity
 import uk.co.maddwarf.notesinthenight.database.entities.NoteEntity
+import uk.co.maddwarf.notesinthenight.database.entities.NoteTagCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelAbilityCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelContactCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelEntity
 import uk.co.maddwarf.notesinthenight.database.entities.SpecialAbilityEntity
+import uk.co.maddwarf.notesinthenight.database.entities.TagEntity
 
 @Database(
     entities = [
@@ -30,9 +32,11 @@ import uk.co.maddwarf.notesinthenight.database.entities.SpecialAbilityEntity
         CrewUpgradeCrossRef::class,
         ScoundrelAbilityCrossRef::class,
         ScoundrelContactCrossRef::class,
-        NoteEntity::class
+        NoteEntity::class,
+        TagEntity::class,
+        NoteTagCrossRef::class
     ],
-    version = 14,
+    version = 15,
     exportSchema = false
 )
 

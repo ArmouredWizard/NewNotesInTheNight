@@ -17,10 +17,10 @@ import javax.inject.Inject
 class NotesListViewModel @Inject constructor(
     private val scoundrelUseCase: ScoundrelUseCase,
     savedStateHandle: SavedStateHandle
-) : ViewModel() {
+) : ViewModel() {//end ViewModel
 
     val notesListUiState: StateFlow<NotesListUiState> =
-        scoundrelUseCase.getAllNotes()
+        scoundrelUseCase.getAllFullNotes()
             .map { NotesListUiState(it) }
             .stateIn(
                 scope = viewModelScope,
@@ -36,7 +36,13 @@ class NotesListViewModel @Inject constructor(
     suspend fun saveNote(note: Note) =
         scoundrelUseCase.saveNote(note)
 
-}//end ViewModel
+    suspend fun saveEditedNote(note: Note) {
+        scoundrelUseCase.saveEditedNote(note)
+    }
+
+    var getNotesTags = scoundrelUseCase.getNotesTags()
+
+}
 
 data class NotesListUiState(
     val list: List<Note> = listOf()

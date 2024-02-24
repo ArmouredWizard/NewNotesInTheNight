@@ -16,13 +16,15 @@ import uk.co.maddwarf.notesinthenight.database.entities.CrewEntity
 import uk.co.maddwarf.notesinthenight.database.entities.CrewUpgradeCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.CrewUpgradeEntity
 import uk.co.maddwarf.notesinthenight.database.entities.FullCrewEntity
+import uk.co.maddwarf.notesinthenight.database.entities.FullNoteEntity
 import uk.co.maddwarf.notesinthenight.database.entities.FullScoundrelEntity
 import uk.co.maddwarf.notesinthenight.database.entities.NoteEntity
+import uk.co.maddwarf.notesinthenight.database.entities.NoteTagCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelAbilityCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelContactCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelEntity
 import uk.co.maddwarf.notesinthenight.database.entities.SpecialAbilityEntity
-import uk.co.maddwarf.notesinthenight.model.Note
+import uk.co.maddwarf.notesinthenight.database.entities.TagEntity
 
 @Dao
 interface NightDao {
@@ -142,18 +144,40 @@ interface NightDao {
     suspend fun deleteCrewUpgrade(crewUpgrade: CrewUpgradeEntity)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertNote(note:NoteEntity)
+    suspend fun insertNote(note: NoteEntity): Long
 
     @Delete
-    suspend fun deleteNote(note:NoteEntity)
+    suspend fun deleteNote(note: NoteEntity)
 
     @Query("SELECT * from notes")
-    fun getAllNotes():Flow<List<NoteEntity>>
+    fun getAllNotes(): Flow<List<NoteEntity>>
 
-    @Query("SELECT * from notes where category = :category")
-    fun getAllNotesByCategory(category:String):Flow<List<NoteEntity>>
+    @Query("SELECT * from notes")
+    fun getAllFullNotes(): Flow<List<FullNoteEntity>>
 
     @Query("SELECT * from notes where noteId = :noteId")
-    fun getNoteById(noteId:Int):Flow<NoteEntity>
+    fun getNoteById(noteId: Int): Flow<NoteEntity>
+
+    @Query("SELECT * from tags")
+    fun getNotesTags(): Flow<List<TagEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertTag(tagEntity: TagEntity): Long
+
+    @Query("SELECT tagId from tags where tag = :tag")
+    fun getTagIdByTag(tag: String): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertNoteTagCrossRef(noteTagCrossRef: NoteTagCrossRef)
+
+    @Update
+    suspend fun updateNote(note: NoteEntity)
+
+    @Transaction
+    @Query("DELETE from NoteTagCrossRef where noteId = :noteId")
+    suspend fun deleteNoteTagCrossRefByNoteId(noteId: Int) {
+
+    }
+
 
 }

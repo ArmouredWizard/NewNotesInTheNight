@@ -8,9 +8,10 @@ import uk.co.maddwarf.notesinthenight.database.entities.CrewAbilityCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.CrewAbilityEntity
 import uk.co.maddwarf.notesinthenight.database.entities.CrewContactCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.CrewUpgradeCrossRef
-import uk.co.maddwarf.notesinthenight.database.entities.NoteEntity
+import uk.co.maddwarf.notesinthenight.database.entities.NoteTagCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelAbilityCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelContactCrossRef
+import uk.co.maddwarf.notesinthenight.database.entities.TagEntity
 import uk.co.maddwarf.notesinthenight.database.entities.toContact
 import uk.co.maddwarf.notesinthenight.database.entities.toContactEntity
 import uk.co.maddwarf.notesinthenight.database.entities.toCrew
@@ -25,6 +26,8 @@ import uk.co.maddwarf.notesinthenight.database.entities.toScoundrel
 import uk.co.maddwarf.notesinthenight.database.entities.toScoundrelEntity
 import uk.co.maddwarf.notesinthenight.database.entities.toSpecialAbility
 import uk.co.maddwarf.notesinthenight.database.entities.toSpecialAbilityEntity
+import uk.co.maddwarf.notesinthenight.database.entities.toTag
+import uk.co.maddwarf.notesinthenight.database.entities.toTagEntity
 import uk.co.maddwarf.notesinthenight.model.Contact
 import uk.co.maddwarf.notesinthenight.model.Crew
 import uk.co.maddwarf.notesinthenight.model.CrewAbility
@@ -32,6 +35,7 @@ import uk.co.maddwarf.notesinthenight.model.CrewUpgrade
 import uk.co.maddwarf.notesinthenight.model.Note
 import uk.co.maddwarf.notesinthenight.model.Scoundrel
 import uk.co.maddwarf.notesinthenight.model.SpecialAbility
+import uk.co.maddwarf.notesinthenight.model.Tag
 import javax.inject.Inject
 
 interface NightRepository {
@@ -61,11 +65,15 @@ interface NightRepository {
     suspend fun deleteAbility(ability: SpecialAbility)
 
     suspend fun insertNote(note: Note)
-    suspend fun deleteNote(note:Note)
+    suspend fun deleteNote(note: Note)
     fun getAllNotes(): Flow<List<Note>>
-    fun getAllNotesByCategory(category:String): Flow<List<Note>>
-    fun getNoteById(noteId:Int): Flow<Note>
 
+    //   fun getAllNotesByCategory(category:String): Flow<List<Note>>
+    fun getNoteById(noteId: Int): Flow<Note>
+    fun getNotesTags(): Flow<List<Tag>>
+    suspend fun saveFullNote(note: Note)
+    fun getAllFullNotes(): Flow<List<Note>>
+    suspend fun saveEditedNote(note: Note)
 }
 
 class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : NightRepository {
@@ -357,28 +365,81 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
         nightDao.deleteSpecialAbilityCrossRefByAbilityId(ability.abilityId)
     }
 
-    override suspend fun insertNote(note: Note) =
+    override suspend fun insertNote(note: Note) {
         nightDao.insertNote(note.toNoteEntity())
+    }
 
     override suspend fun deleteNote(note: Note) =
         nightDao.deleteNote(note.toNoteEntity())
 
-    override fun getAllNotes():Flow<List<Note>> =
-        nightDao.getAllNotes().map{
-            it.map{note->
+    override fun getAllNotes(): Flow<List<Note>> =
+        nightDao.getAllNotes().map {
+            it.map { note ->
                 note.toNote()
             }
         }
 
-    override fun getAllNotesByCategory(category: String):Flow<List<Note>> =
-        nightDao.getAllNotesByCategory(category).map {
-            it.map{note->
+    override fun getAllFullNotes(): Flow<List<Note>> =
+        nightDao.getAllFullNotes().map {
+            it.map { note ->
                 note.toNote()
             }
         }
 
-    override fun getNoteById(noteId: Int) :Flow<Note> =
-        nightDao.getNoteById(noteId).map{
+    /*   override fun getAllNotesByCategory(category: String):Flow<List<Note>> =
+           nightDao.getAllNotesByCategory(category).map {
+               it.map{note->
+                   note.toNote()
+               }
+           }*/
+
+    override fun getNoteById(noteId: Int): Flow<Note> =
+        nightDao.getNoteById(noteId).map {
             it.toNote()
         }
+
+    override fun getNotesTags(): Flow<List<Tag>> =
+        nightDao.getNotesTags().map {
+            it.map { tag ->
+                tag.toTag()
+            }
+        }
+
+    override suspend fun saveFullNote(note: Note) {
+        val noteId = nightDao.insertNote(note.toNoteEntity())
+
+        note.tags.forEach { tag ->
+            var tagId = nightDao.insertTag(tag.toTagEntity())
+            if (tagId == -1L) {
+                tagId = tag.tagId.toLong()
+            }
+            nightDao.insertNoteTagCrossRef(
+                NoteTagCrossRef(
+                    noteId = noteId.toInt(),
+                    tagId = tagId.toInt()
+                )
+            )
+        }
+
+    }//end save full note
+
+    override suspend fun saveEditedNote(note: Note) {
+        Log.d("EDIT NOTE IN REPO", note.toString())
+        nightDao.updateNote(note.toNoteEntity()) //todo follow Save edited crew ideas.
+
+        nightDao.deleteNoteTagCrossRefByNoteId(note.noteId)
+        note.tags.forEach {
+            var tagId = nightDao.insertTag(it.toTagEntity())
+            if (tagId == -1L) {
+                tagId = it.tagId.toLong()
+            }
+            nightDao.insertNoteTagCrossRef(
+                NoteTagCrossRef(
+                    noteId = note.noteId,
+                    tagId = tagId.toInt()
+                )
+            )
+        }
+    }//end save edit note
+
 }

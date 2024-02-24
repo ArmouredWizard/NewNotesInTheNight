@@ -160,6 +160,7 @@ fun CrewListBody(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
+                .padding(start = 10.dp, end = 10.dp)
         ) {
             Row(
                 modifier = Modifier

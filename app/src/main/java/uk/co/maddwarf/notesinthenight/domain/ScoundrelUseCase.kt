@@ -8,6 +8,7 @@ import uk.co.maddwarf.notesinthenight.model.CrewUpgrade
 import uk.co.maddwarf.notesinthenight.model.Note
 import uk.co.maddwarf.notesinthenight.model.Scoundrel
 import uk.co.maddwarf.notesinthenight.model.SpecialAbility
+import uk.co.maddwarf.notesinthenight.model.Tag
 import uk.co.maddwarf.notesinthenight.repository.NightRepository
 import javax.inject.Inject
 
@@ -91,7 +92,7 @@ class ScoundrelUseCase @Inject constructor(private val nightRepository: NightRep
 
 
     suspend fun saveNote(note: Note) =
-        nightRepository.insertNote(note)
+        nightRepository.saveFullNote(note)
 
     suspend fun deleteNote(note: Note) =
         nightRepository.deleteNote(note)
@@ -99,11 +100,23 @@ class ScoundrelUseCase @Inject constructor(private val nightRepository: NightRep
     fun getAllNotes(): Flow<List<Note>> =
         nightRepository.getAllNotes()
 
+    fun getAllFullNotes(): Flow<List<Note>> =
+        nightRepository.getAllFullNotes()
+
+/*
     fun getAllNotesByCategory(category: String): Flow<List<Note>> =
         nightRepository.getAllNotesByCategory(category)
+*/
 
     fun getNoteById(noteId: Int): Flow<Note> =
         nightRepository.getNoteById(noteId)
+
+    fun getNotesTags():Flow<List<Tag>> =
+        nightRepository.getNotesTags()
+
+    suspend fun saveEditedNote(note: Note) {
+        nightRepository.saveEditedNote(note)
+    }
 
 
 }

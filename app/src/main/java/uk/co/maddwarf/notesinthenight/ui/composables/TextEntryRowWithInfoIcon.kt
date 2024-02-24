@@ -3,8 +3,10 @@ package uk.co.maddwarf.notesinthenight.ui.composables
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -36,10 +38,11 @@ fun TextEntryRowWithInfoIcon(
 ) {
     val showDialog = remember { mutableStateOf(false) }
     Row(
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(width),
+            modifier = Modifier.fillMaxWidth(/*width*/),
             value = data,
             onValueChange = onValueChange,
             label = { Text(text = label) },
@@ -49,29 +52,24 @@ fun TextEntryRowWithInfoIcon(
                 disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
             ),
             singleLine = singleLine,
-            /*    supportingText = {
-                 if (limited) {
-                        Text(
-                            text = "${data.length} / 19",
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End,
-                        )
-                    }
-                },*/
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
                 imeAction = ImeAction.Next
-            )
+            ),
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = "Info",
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .clickable(
+                            onClick = { showDialog.value = true }
+                        )
+                )//end Icon
+            }
+
         )//end OutlinedTextField
-        Icon(
-            imageVector = Icons.Default.Info,
-            contentDescription = "Info",
-            modifier = Modifier
-                .padding(5.dp)
-                .clickable(
-                    onClick = { showDialog.value = true }
-                )
-        )//end Icon
+
     }
     if (showDialog.value) {
         InfoDialog(
@@ -111,7 +109,7 @@ fun TextEntryWithSpinner(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
-            modifier = Modifier.weight(.25f)
+            modifier = Modifier.width(70.dp)
         ) {
             MySpinner(
                 expanded = spinnerExpanded,
@@ -121,6 +119,7 @@ fun TextEntryWithSpinner(
                 report = "" //chosenItem
             )
         }
+        Spacer(modifier = Modifier.width(5.dp))
         Row(
             modifier = Modifier.weight(1f)
         ) {
