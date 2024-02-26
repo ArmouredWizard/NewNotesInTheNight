@@ -29,6 +29,8 @@ fun NoteInfoPopUp(
     secondText:String,
     thirdTitle:String,
     thirdText:String,
+    fourthTitle:String,
+    fourthText:String,
     onDismiss: () -> Unit
 ) {
     Dialog(
@@ -53,6 +55,7 @@ fun NoteInfoPopUp(
                 TraitText(title = firstTextTitle, text = firstText)
                 TraitText(title = secondTextTitle, text = secondText)
                 TraitText(title = thirdTitle, text = thirdText)
+                TraitText(title = fourthTitle, text = fourthText)
             }
         }
     }

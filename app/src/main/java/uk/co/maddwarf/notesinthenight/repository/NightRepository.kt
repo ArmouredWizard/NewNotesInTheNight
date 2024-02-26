@@ -8,6 +8,7 @@ import uk.co.maddwarf.notesinthenight.database.entities.CrewAbilityCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.CrewAbilityEntity
 import uk.co.maddwarf.notesinthenight.database.entities.CrewContactCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.CrewUpgradeCrossRef
+import uk.co.maddwarf.notesinthenight.database.entities.NoteCrewCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.NoteScoundrelCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.NoteTagCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelAbilityCrossRef
@@ -407,6 +408,7 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
         }
 
     override suspend fun saveFullNote(note: Note) {
+        Log.d("FULL NOTE SAVE", note.toString())
         val noteId = nightDao.insertNote(note.toNoteEntity())
 
         note.tags.forEach { tag ->
@@ -431,8 +433,17 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
             )
         }
 
-
         //todo crew code
+
+        note.crews.forEach{crew->
+            nightDao.insertNoteCrewCrossRef(
+                NoteCrewCrossRef(
+                    noteId = noteId.toInt(),
+                    crewId = crew.crewId
+                )
+            )
+        }
+
     }//end save full note
 
     override suspend fun saveEditedNote(note: Note) {
@@ -465,6 +476,15 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
         }
 
         //todo crew code
+nightDao.deleteNoteCrewCrossRefByNoteId(note.noteId)
+        note.crews.forEach{crew->
+            nightDao.insertNoteCrewCrossRef(
+                NoteCrewCrossRef(
+                    noteId = note.noteId.toInt(),
+                    crewId = crew.crewId
+                )
+            )
+        }
 
     }//end save edit note
 

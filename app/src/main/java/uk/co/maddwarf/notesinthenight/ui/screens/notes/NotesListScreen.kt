@@ -127,7 +127,10 @@ fun NotesListScreen(
     }
 
     fun onCrewAdd(crew: Crew) {
+        Log.d("CREW ON ADD", newNote.toString())
         newNote = newNote.copy(crews = (newNote.crews + crew).toMutableList())
+        Log.d("CREW After ADD", newNote.toString())
+
     }
 
     if (displayEditNoteDialog) {
@@ -280,6 +283,10 @@ fun NotesListBody(
             thirdTitle = "Scoundrels",
             thirdText = chosenNoteToShow.scoundrels.map {
                 it.name
+            }.toString(),
+            fourthTitle = "Crews",
+            fourthText = chosenNoteToShow.crews.map {
+                it.crewName
             }.toString(),
             onDismiss = { showNotePopUp = !showNotePopUp }
         )

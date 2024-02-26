@@ -1,10 +1,13 @@
 package uk.co.maddwarf.notesinthenight.ui.composables.note
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,10 +17,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,6 +51,7 @@ import uk.co.maddwarf.notesinthenight.ui.composables.TitleBlock
 import uk.co.maddwarf.notesinthenight.ui.composables.crew.MyCrewSpinner
 import uk.co.maddwarf.notesinthenight.ui.composables.scoundrel.MyScoundrelSpinner
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NoteEntryDialog(
     noteId: Int,
@@ -85,6 +92,7 @@ fun NoteEntryDialog(
                     painterResource(id = R.drawable.cobbles),
                     contentScale = ContentScale.FillBounds
                 )
+                .verticalScroll(rememberScrollState())
         ) {
             Column(
                 modifier = Modifier
@@ -108,120 +116,197 @@ fun NoteEntryDialog(
                     infoText = "Note Body Text"
                 )
 
-//todo FORMAT TAGS
-                Text(text = "TAGS")
-
-                LazyRow {
-                    items(newTags) {
-                        Text(text = it.tag)
-                    }
-                }
-//TODO FORMAT TAGS
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                Spacer(modifier = Modifier.height(5.dp))
+                Column(
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(5.dp))
+                        .border(width = 1.dp, shape = RoundedCornerShape(5.dp), color = Color.Black)
+                        .background(color = Color.LightGray)
+                        .padding(10.dp)
                 ) {
-                    Row(modifier = Modifier.weight(0.85f)) {
-                        TextEntryRowWithInfoIcon(
-                            data = newTag,
-                            onValueChange = onCategoryChange,
-                            label = "New Tag",
-                            infoText = "Enter New Tag. Make sure to click the ADD Button before Accepting the Note",
-                        )
+
+                    Text(text = "TAGS")
+                    FlowRow {
+                        newTags.forEach {
+                            Text(text = it.tag,
+                                modifier = Modifier
+                                    .padding(2.dp)
+                                    .background(color = MaterialTheme.colorScheme.primaryContainer)
+                            )                        }
                     }
+
                     Row(
-                        modifier = Modifier
-                            .weight(0.15f),
-                        horizontalArrangement = Arrangement.Center,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.AddCircle,
-                            contentDescription = "Add Tag",
-                            modifier = Modifier
-                                .clickable(onClick = { onTagAdd(Tag(tag = newTag)) })
-                                .size(30.dp)
+                        Row(modifier = Modifier.weight(0.85f)) {
+                            TextEntryRowWithInfoIcon(
+                                data = newTag,
+                                onValueChange = onCategoryChange,
+                                label = "New Tag",
+                                infoText = "Enter New Tag. Make sure to click the ADD Button before Accepting the Note",
                             )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .weight(0.15f),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.AddCircle,
+                                contentDescription = "Add Tag",
+                                modifier = Modifier
+                                    .clickable(onClick = { onTagAdd(Tag(tag = newTag)) })
+                                    .size(30.dp)
+                            )
+                        }
                     }
-                }
 
-                var tagExpanded by remember { mutableStateOf(false) }
-                var chosenExistingTag by remember { mutableStateOf(Tag()) }
-                fun tagChooser(tag: Tag) {
-                    tagExpanded = false
-                    chosenExistingTag = tag
-                    onTagAdd(chosenExistingTag)
-                }
-                Row(
-                    modifier = Modifier,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Add a Tag")
-                    MyTagSpinner(
-                        expanded = tagExpanded,
-                        onClick = { tagExpanded = !tagExpanded },
-                        list = tagsList,
-                        chooser = ::tagChooser,
-                        report = "Tag"
-                    )
-                }
 
-                Text(text = "Scoundrels")
-                LazyRow {
-                    items(newScoundrels) {
-                        Text(text = it.name)
+                    var tagExpanded by remember { mutableStateOf(false) }
+                    var chosenExistingTag by remember { mutableStateOf(Tag()) }
+                    fun tagChooser(tag: Tag) {
+                        tagExpanded = false
+                        chosenExistingTag = tag
+                        onTagAdd(chosenExistingTag)
                     }
-                }
-
-                var scoundrelExpanded by remember { mutableStateOf(false) }
-                var chosenExistingScoundrel by remember { mutableStateOf(Scoundrel()) }
-                fun scoundrelChooser(scoundrel: Scoundrel) {
-                    scoundrelExpanded = false
-                    chosenExistingScoundrel = scoundrel
-                    onScoundrelAdd(chosenExistingScoundrel)
-                }
-                Row(
-                    modifier = Modifier,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Add a Scoundrel")
-                    MyScoundrelSpinner(
-                        expanded = scoundrelExpanded,
-                        onClick = { scoundrelExpanded = !scoundrelExpanded },
-                        list = everyScoundrelList,
-                        chooser = ::scoundrelChooser,
-                        report = "Scoundrel"
-                    )
-                }
-
-                Text(text = "Crew")
-                LazyRow {
-                    items(newCrews) {
-                        Text(text = it.crewName)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(text = "Add Existing:")
+                        }
+                        Row(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            MyTagSpinner(
+                                expanded = tagExpanded,
+                                onClick = { tagExpanded = !tagExpanded },
+                                list = tagsList,
+                                chooser = ::tagChooser,
+                                report = "Tag"
+                            )
+                        }
                     }
-                }
+                }//end TAGS column
 
-                var crewExpanded by remember { mutableStateOf(false) }
-                var chosenExistingCrew by remember { mutableStateOf(Crew()) }
-                fun crewChooser(crew: Crew) {
-                    crewExpanded = false
-                    chosenExistingCrew = crew
-                    onCrewAdd(chosenExistingCrew)
-                }
-                Row(
-                    modifier = Modifier,
-                    verticalAlignment = Alignment.CenterVertically
+                Spacer(modifier = Modifier.height(5.dp))
+                Column(
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(5.dp))
+                        .border(width = 1.dp, shape = RoundedCornerShape(5.dp), color = Color.Black)
+                        .background(color = Color.LightGray)
+                        .padding(10.dp)
                 ) {
-                    Text(text = "Add a Crew")
-                    MyCrewSpinner(
-                        expanded = crewExpanded,
-                        onClick = { crewExpanded = !crewExpanded },
-                        list = everyCrewList,
-                        chooser = ::crewChooser,
-                        report = "Crew"
-                    )
-                }
+                    Text(text = "Scoundrels")
+                   /* LazyRow {
+                        items(newScoundrels) {
+                            Text(text = it.name)
+                        }
+                    }*/
+
+                    FlowRow {
+                        newScoundrels.forEach {
+                            Text(text = it.name,
+                                modifier = Modifier
+                                    .padding(2.dp)
+                                    .background(color = MaterialTheme.colorScheme.primaryContainer)
+                            )                        }
+                    }
+
+                    var scoundrelExpanded by remember { mutableStateOf(false) }
+                    var chosenExistingScoundrel by remember { mutableStateOf(Scoundrel()) }
+                    fun scoundrelChooser(scoundrel: Scoundrel) {
+                        scoundrelExpanded = false
+                        chosenExistingScoundrel = scoundrel
+                        onScoundrelAdd(chosenExistingScoundrel)
+                    }
+                    Row(
+                        modifier = Modifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(text = "Add Existing:")
+                        }
+                        Row(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            MyScoundrelSpinner(
+                                expanded = scoundrelExpanded,
+                                onClick = { scoundrelExpanded = !scoundrelExpanded },
+                                list = everyScoundrelList,
+                                chooser = ::scoundrelChooser,
+                                report = "Scoundrel"
+                            )
+                        }
+                    }
+                }//end scoundrel Column
+
+                Spacer(modifier = Modifier.height(5.dp))
+                Column(
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(5.dp))
+                        .border(width = 1.dp, shape = RoundedCornerShape(5.dp), color = Color.Black)
+                        .background(color = Color.LightGray)
+                        .padding(10.dp)
+                ) {
+
+                    Text(text = "Crew")
+                  /*  LazyRow {
+                        items(newCrews) {
+                            Text(text = it.crewName)
+                        }
+                    }*/
+
+                    FlowRow {
+                        newCrews.forEach {
+                            Text(text = it.crewName,
+                                modifier = Modifier
+                                    .padding(2.dp)
+                                    .background(color = MaterialTheme.colorScheme.primaryContainer)
+                            )                        }
+                    }
+
+                    var crewExpanded by remember { mutableStateOf(false) }
+                    var chosenExistingCrew by remember { mutableStateOf(Crew()) }
+                    fun crewChooser(crew: Crew) {
+                        crewExpanded = false
+                        chosenExistingCrew = crew
+                        onCrewAdd(chosenExistingCrew)
+                    }
+                    Row(
+                        modifier = Modifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(text = "Add Existing:")
+                        }
+                        Row(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            MyCrewSpinner(
+                                expanded = crewExpanded,
+                                onClick = { crewExpanded = !crewExpanded },
+                                list = everyCrewList,
+                                chooser = ::crewChooser,
+                                report = "Crew"
+                            )
+                        }
+                    }
+                }//end crew column
 
                 Spacer(modifier = Modifier.height(5.dp))
                 Row(
@@ -247,7 +332,8 @@ fun NoteEntryDialog(
                                     title = title,
                                     body = body,
                                     tags = newTags,
-                                    scoundrels = newScoundrels
+                                    scoundrels = newScoundrels,
+                                    crews = newCrews
                                 )
                             )
                         }, text = "Accept")
