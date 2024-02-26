@@ -11,7 +11,9 @@ import uk.co.maddwarf.notesinthenight.database.entities.CrewContactCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.CrewEntity
 import uk.co.maddwarf.notesinthenight.database.entities.CrewUpgradeCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.CrewUpgradeEntity
+import uk.co.maddwarf.notesinthenight.database.entities.NoteCrewCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.NoteEntity
+import uk.co.maddwarf.notesinthenight.database.entities.NoteScoundrelCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.NoteTagCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelAbilityCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelContactCrossRef
@@ -34,9 +36,11 @@ import uk.co.maddwarf.notesinthenight.database.entities.TagEntity
         ScoundrelContactCrossRef::class,
         NoteEntity::class,
         TagEntity::class,
-        NoteTagCrossRef::class
+        NoteTagCrossRef::class,
+        NoteScoundrelCrossRef::class,
+        NoteCrewCrossRef::class
     ],
-    version = 15,
+    version = 18,
     exportSchema = false
 )
 

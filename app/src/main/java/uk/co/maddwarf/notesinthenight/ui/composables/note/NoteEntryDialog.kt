@@ -10,14 +10,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,37 +34,44 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import uk.co.maddwarf.notesinthenight.R
+import uk.co.maddwarf.notesinthenight.model.Crew
 import uk.co.maddwarf.notesinthenight.model.Note
+import uk.co.maddwarf.notesinthenight.model.Scoundrel
 import uk.co.maddwarf.notesinthenight.model.Tag
 import uk.co.maddwarf.notesinthenight.ui.composables.MyButton
 import uk.co.maddwarf.notesinthenight.ui.composables.TextEntryRowWithInfoIcon
 import uk.co.maddwarf.notesinthenight.ui.composables.TextEntryWithSpinner
 import uk.co.maddwarf.notesinthenight.ui.composables.TitleBlock
+import uk.co.maddwarf.notesinthenight.ui.composables.crew.MyCrewSpinner
+import uk.co.maddwarf.notesinthenight.ui.composables.scoundrel.MyScoundrelSpinner
 
 @Composable
 fun NoteEntryDialog(
-    noteId:Int,
+    noteId: Int,
     title: String,
     body: String,
     tags: List<Tag>,
     newTag: String,
+
+    scoundrels: List<Scoundrel>,
+    crews: List<Crew>,
+
     onDismiss: () -> Unit,
     onAccept: (Note) -> Unit,
     onTitleChange: (String) -> Unit,
     onBodyChange: (String) -> Unit,
     onCategoryChange: (String) -> Unit,
     tagsList: List<Tag>,
-    onTagAdd:(String)->Unit,
+    onTagAdd: (Tag) -> Unit,
+    everyScoundrelList: List<Scoundrel>,
+    onScoundrelAdd: (Scoundrel) -> Unit,
+    everyCrewList: List<Crew>,
+    onCrewAdd: (Crew) -> Unit
 ) {
 
-    var newTags: MutableList<Tag> = tags.distinct().toMutableList()
-    var localNewtag by remember{ mutableStateOf( newTag)}
-
-   /* fun onTagAdd(newTag: String) {
-        newTags.add(Tag(tag = newTag))
-        localNewtag = ""
-    }*/
-
+    val newTags: MutableList<Tag> = tags.distinct().toMutableList()
+    val newScoundrels: MutableList<Scoundrel> = scoundrels.distinct().toMutableList()
+    val newCrews: MutableList<Crew> = crews.distinct().toMutableList()
 
     Dialog(
         onDismissRequest = onDismiss
@@ -102,46 +108,119 @@ fun NoteEntryDialog(
                     infoText = "Note Body Text"
                 )
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    /*        TextEntryWithSpinner(
-                                textValue = newtag,
-                                label = "Category",
-                                infoText = "Enter a Category for this Note",
-                                itemList = tagsList,
-                                onValueChange = onCategoryChange
-                            )*/
-                }
-
+//todo FORMAT TAGS
                 Text(text = "TAGS")
+
                 LazyRow {
                     items(newTags) {
                         Text(text = it.tag)
                     }
                 }
+//TODO FORMAT TAGS
+
                 Row(
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(modifier = Modifier.weight(0.8f)) {
-                        TextEntryWithSpinner(
-                            textValue = newTag,//localNewtag,
+                    Row(modifier = Modifier.weight(0.85f)) {
+                        TextEntryRowWithInfoIcon(
+                            data = newTag,
                             onValueChange = onCategoryChange,
                             label = "New Tag",
-                            infoText = "Enter New Tag, or select from List. Make sure to click the ADD Button before Accepting the Note",
-                            itemList = tagsList.map{
-                                it.tag
-                            }
+                            infoText = "Enter New Tag. Make sure to click the ADD Button before Accepting the Note",
                         )
                     }
-                    Row(modifier = Modifier.weight(0.2f)) {
+                    Row(
+                        modifier = Modifier
+                            .weight(0.15f),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.AddCircle,
                             contentDescription = "Add Tag",
-                            modifier = Modifier.clickable(onClick = { onTagAdd(newTag) })
-                        )
+                            modifier = Modifier
+                                .clickable(onClick = { onTagAdd(Tag(tag = newTag)) })
+                                .size(30.dp)
+                            )
                     }
+                }
+
+                var tagExpanded by remember { mutableStateOf(false) }
+                var chosenExistingTag by remember { mutableStateOf(Tag()) }
+                fun tagChooser(tag: Tag) {
+                    tagExpanded = false
+                    chosenExistingTag = tag
+                    onTagAdd(chosenExistingTag)
+                }
+                Row(
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Add a Tag")
+                    MyTagSpinner(
+                        expanded = tagExpanded,
+                        onClick = { tagExpanded = !tagExpanded },
+                        list = tagsList,
+                        chooser = ::tagChooser,
+                        report = "Tag"
+                    )
+                }
+
+                Text(text = "Scoundrels")
+                LazyRow {
+                    items(newScoundrels) {
+                        Text(text = it.name)
+                    }
+                }
+
+                var scoundrelExpanded by remember { mutableStateOf(false) }
+                var chosenExistingScoundrel by remember { mutableStateOf(Scoundrel()) }
+                fun scoundrelChooser(scoundrel: Scoundrel) {
+                    scoundrelExpanded = false
+                    chosenExistingScoundrel = scoundrel
+                    onScoundrelAdd(chosenExistingScoundrel)
+                }
+                Row(
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Add a Scoundrel")
+                    MyScoundrelSpinner(
+                        expanded = scoundrelExpanded,
+                        onClick = { scoundrelExpanded = !scoundrelExpanded },
+                        list = everyScoundrelList,
+                        chooser = ::scoundrelChooser,
+                        report = "Scoundrel"
+                    )
+                }
+
+                Text(text = "Crew")
+                LazyRow {
+                    items(newCrews) {
+                        Text(text = it.crewName)
+                    }
+                }
+
+                var crewExpanded by remember { mutableStateOf(false) }
+                var chosenExistingCrew by remember { mutableStateOf(Crew()) }
+                fun crewChooser(crew: Crew) {
+                    crewExpanded = false
+                    chosenExistingCrew = crew
+                    onCrewAdd(chosenExistingCrew)
+                }
+                Row(
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Add a Crew")
+                    MyCrewSpinner(
+                        expanded = crewExpanded,
+                        onClick = { crewExpanded = !crewExpanded },
+                        list = everyCrewList,
+                        chooser = ::crewChooser,
+                        report = "Crew"
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(5.dp))
@@ -167,7 +246,8 @@ fun NoteEntryDialog(
                                     noteId = noteId,
                                     title = title,
                                     body = body,
-                                    tags = newTags
+                                    tags = newTags,
+                                    scoundrels = newScoundrels
                                 )
                             )
                         }, text = "Accept")

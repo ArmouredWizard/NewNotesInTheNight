@@ -13,20 +13,40 @@ data class FullNoteEntity(
         entityColumn = "tagId",
         associateBy = Junction(NoteTagCrossRef::class)
     )
-    val tags: List<TagEntity>
+    val tags: List<TagEntity>,
+
+    @Relation(
+        parentColumn = "noteId",
+        entityColumn = "scoundrelId",
+        associateBy = Junction(NoteScoundrelCrossRef::class)
+    )
+    val scoundrels: List<ScoundrelEntity>,
+
+    @Relation(
+        parentColumn = "noteId",
+        entityColumn = "crewId",
+        associateBy = Junction(NoteCrewCrossRef::class)
+    )
+    val crews: List<CrewEntity>
 )
 
 fun Note.toFullNoteEntity(): NoteEntity = NoteEntity(
     noteId = noteId,
     title = title,
-    body = body
+    body = body,
 )
 
 fun FullNoteEntity.toNote(): Note = Note(
     noteId = noteEntity.noteId,
     title = noteEntity.title,
+    body = noteEntity.body,
     tags = tags.map {
         it.toTag()
     }.toMutableList(),
-    body = noteEntity.body
+    scoundrels = scoundrels.map {
+        it.toScoundrel()
+    }.toMutableList(),
+    crews = crews.map {
+        it.toCrew()
+    }.toMutableList()
 )

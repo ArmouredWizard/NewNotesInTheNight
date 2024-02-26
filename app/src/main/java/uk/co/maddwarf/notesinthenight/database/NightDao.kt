@@ -19,6 +19,7 @@ import uk.co.maddwarf.notesinthenight.database.entities.FullCrewEntity
 import uk.co.maddwarf.notesinthenight.database.entities.FullNoteEntity
 import uk.co.maddwarf.notesinthenight.database.entities.FullScoundrelEntity
 import uk.co.maddwarf.notesinthenight.database.entities.NoteEntity
+import uk.co.maddwarf.notesinthenight.database.entities.NoteScoundrelCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.NoteTagCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelAbilityCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelContactCrossRef
@@ -175,9 +176,14 @@ interface NightDao {
 
     @Transaction
     @Query("DELETE from NoteTagCrossRef where noteId = :noteId")
-    suspend fun deleteNoteTagCrossRefByNoteId(noteId: Int) {
+    suspend fun deleteNoteTagCrossRefByNoteId(noteId: Int)
 
-    }
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertNoteScoundrelCrossRef(noteScoundrelCrossRef: NoteScoundrelCrossRef)
+
+    @Transaction
+    @Query("DELETE from NoteScoundrelCrossRef where noteId = :noteId")
+    suspend fun deleteNoteScoundrelCrossRefByNoteId(noteId: Int)
 
 
 }

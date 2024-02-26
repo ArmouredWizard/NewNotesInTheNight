@@ -41,6 +41,9 @@ class NotesListViewModel @Inject constructor(
     }
 
     var getNotesTags = scoundrelUseCase.getNotesTags()
+    var getAllScoundrels = scoundrelUseCase.getListOfScoundrels()
+    var getAllCrews = scoundrelUseCase.getListOfCrews()
+
 
 }
 
