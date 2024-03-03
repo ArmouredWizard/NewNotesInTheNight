@@ -593,7 +593,7 @@ fun ContactsBlock(
         onValueChange(
             scoundrelDetails.copy(
                 contacts = scoundrelDetails.contacts + ContactWithRating(
-                    scoundrelId = scoundrelDetails.scoundrelId,
+                    connectionId = scoundrelDetails.scoundrelId,
                     contactName = info.name,
                     contactDescription = info.descr,
                     rating = info.rating
@@ -681,7 +681,6 @@ fun ContactsBlock(
         }
     }
     if (showContactDialog) {
-      //  NameAndDescrEntryDialog(
         NameAndDescrAndRatingEntryDialog(
             name = newContact.contactName,
             description = newContact.contactDescription,

@@ -78,6 +78,7 @@ interface NightRepository {
     fun getAllFullNotes(): Flow<List<Note>>
     suspend fun saveEditedNote(note: Note)
     fun getContactWithRatingByScoundrelId(scoundrelId: Int): Flow<List<ContactWithRating>>
+    fun getContactWithRatingByCrewId(crewId: Int): Flow<List<ContactWithRating>>
 }
 
 class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : NightRepository {
@@ -245,12 +246,13 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
         crew.contacts.forEach { contact ->
             var contactId = nightDao.saveContact(contact.toContactEntity())
             if (contactId == -1L) {
-                contactId = contact.id.toLong()
+                contactId = contact.contactId.toLong()
             }
             nightDao.insertCrewContactCrossRef(
                 CrewContactCrossRef(
                     crewId = crewId.toInt(),
-                    contactId = contactId.toInt()
+                    contactId = contactId.toInt(),
+                    rating = contact.rating
                 )
             )
         }
@@ -294,12 +296,13 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
         crew.contacts.forEach { contact ->
             var contactId = nightDao.saveContact(contact.toContactEntity())
             if (contactId == -1L) {
-                contactId = contact.id.toLong()
+                contactId = contact.contactId.toLong()
             }
             nightDao.insertCrewContactCrossRef(
                 CrewContactCrossRef(
                     crewId = crew.crewId.toInt(),
-                    contactId = contactId.toInt()
+                    contactId = contactId.toInt(),
+                    rating = contact.rating
                 )
             )
         }
@@ -500,5 +503,14 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
             }
         }
     }
+
+    override fun getContactWithRatingByCrewId(crewId: Int): Flow<List<ContactWithRating>> =
+        nightDao.getContactWithRatingByCrewId(crewId).map{
+            it.map{
+                contact->
+                contact.toContactWithRating()
+            }
+        }
+
 
 }

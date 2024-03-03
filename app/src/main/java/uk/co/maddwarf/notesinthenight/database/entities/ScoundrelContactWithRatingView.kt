@@ -2,7 +2,6 @@ package uk.co.maddwarf.notesinthenight.database.entities
 
 import android.util.Log
 import androidx.room.DatabaseView
-import uk.co.maddwarf.notesinthenight.model.Contact
 import uk.co.maddwarf.notesinthenight.model.ContactWithRating
 
 @DatabaseView(
@@ -10,7 +9,7 @@ import uk.co.maddwarf.notesinthenight.model.ContactWithRating
             " inner join ScoundrelContactCrossRef" +
             " on contacts.contactId = ScoundrelContactCrossRef.contactId"
 )
-data class ContactWithRatingView(
+data class ScoundrelContactWithRatingView(
     val scoundrelId: Int = 0,
     var contactId: Int,
     val contactName: String,
@@ -18,7 +17,7 @@ data class ContactWithRatingView(
     var rating: Int = 0
 )
 
-fun ContactWithRatingView.toContactWithRating(): ContactWithRating {
+fun ScoundrelContactWithRatingView.toContactWithRating(): ContactWithRating {
     Log.d("CONTACT to convert", contactName)
     return ContactWithRating(
         contactId = contactId,

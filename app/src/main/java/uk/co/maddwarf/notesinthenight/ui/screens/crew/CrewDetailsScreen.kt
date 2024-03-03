@@ -43,6 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import uk.co.maddwarf.notesinthenight.NotesInTheNightTopAppBar
 import uk.co.maddwarf.notesinthenight.R
 import uk.co.maddwarf.notesinthenight.model.Contact
+import uk.co.maddwarf.notesinthenight.model.ContactWithRating
 import uk.co.maddwarf.notesinthenight.model.Crew
 import uk.co.maddwarf.notesinthenight.model.CrewAbility
 import uk.co.maddwarf.notesinthenight.model.CrewUpgrade
@@ -53,6 +54,7 @@ import uk.co.maddwarf.notesinthenight.ui.composables.MyButton
 import uk.co.maddwarf.notesinthenight.ui.composables.TraitDots
 import uk.co.maddwarf.notesinthenight.ui.composables.TraitText
 import uk.co.maddwarf.notesinthenight.ui.composables.contact.ContactItem
+import uk.co.maddwarf.notesinthenight.ui.composables.contact.ContactWithRatingItem
 import uk.co.maddwarf.notesinthenight.ui.composables.scoundrel.ScoundrelItem
 
 object CrewDetailsDestination : NavigationDestination {
@@ -203,7 +205,7 @@ fun CrewDetails(crew: Crew, modifier: Modifier, scoundrelList: List<Scoundrel>) 
 
         TraitDots(
             traitName = "Heat",
-            traitValue =crew.heat,
+            traitValue = crew.heat,
             maxValue = 9,
             onDotClicked = {},
             infoText = stringResource(R.string.heat_info)
@@ -213,7 +215,7 @@ fun CrewDetails(crew: Crew, modifier: Modifier, scoundrelList: List<Scoundrel>) 
 
         TraitDots(
             traitName = "Tier",
-            traitValue =  crew.tier,
+            traitValue = crew.tier,
             maxValue = 4,
             onDotClicked = {},
             infoText = stringResource(R.string.tier_info)
@@ -306,8 +308,8 @@ fun CrewDetails(crew: Crew, modifier: Modifier, scoundrelList: List<Scoundrel>) 
         }
 
         var showContactPopUp by remember { mutableStateOf(false) }
-        var chosenContact by remember { mutableStateOf(Contact()) }
-        fun doContactPopUp(contact: Contact) {
+        var chosenContact by remember { mutableStateOf(ContactWithRating()) }
+        fun doContactPopUp(contact: ContactWithRating) {
             chosenContact = contact
             showContactPopUp = true
         }
@@ -315,9 +317,9 @@ fun CrewDetails(crew: Crew, modifier: Modifier, scoundrelList: List<Scoundrel>) 
             InfoPopUp(
                 title = "Contact",
                 firstTextTitle = "Contact Name",
-                firstText = chosenContact.name,
+                firstText = chosenContact.contactName,
                 secondTextTitle = "Contact Description",
-                secondText = chosenContact.description,
+                secondText = chosenContact.contactDescription,
                 onDismiss = { showContactPopUp = false }
             )
         }
@@ -330,13 +332,15 @@ fun CrewDetails(crew: Crew, modifier: Modifier, scoundrelList: List<Scoundrel>) 
         )
         if (contactsExpanded) {
             crew.contacts.forEach { contact ->
-                ContactItem(
+                ContactWithRatingItem(
                     contact = contact,
                     modifier = Modifier
                         .padding(4.dp),
                     enableDelete = false,
                     onClick = { doContactPopUp(it) },
-                    displayDeleteContactDialog = {} //displayDeleteDialog
+                    displayDeleteContactDialog = {}, //displayDeleteDialog
+                    onRatingClick = {},
+                    changeRating = false
                 )
             }//end LazyColumn
         }//end contacts expanded

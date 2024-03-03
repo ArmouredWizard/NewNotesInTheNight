@@ -9,10 +9,11 @@ import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import uk.co.maddwarf.notesinthenight.database.entities.ContactEntity
-import uk.co.maddwarf.notesinthenight.database.entities.ContactWithRatingView
+import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelContactWithRatingView
 import uk.co.maddwarf.notesinthenight.database.entities.CrewAbilityCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.CrewAbilityEntity
 import uk.co.maddwarf.notesinthenight.database.entities.CrewContactCrossRef
+import uk.co.maddwarf.notesinthenight.database.entities.CrewContactWithRatingView
 import uk.co.maddwarf.notesinthenight.database.entities.CrewEntity
 import uk.co.maddwarf.notesinthenight.database.entities.CrewUpgradeCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.CrewUpgradeEntity
@@ -195,7 +196,10 @@ interface NightDao {
     suspend fun deleteNoteCrewCrossRefByNoteId(noteId: Int)
 
     @Query("SELECT * from contacts inner join ScoundrelContactCrossRef on contacts.contactId = ScoundrelContactCrossRef.contactId where ScoundrelContactCrossRef.scoundrelId = :scoundrelId")
-    fun getContactWithRatingByScoundrelId(scoundrelId: Int): Flow<List<ContactWithRatingView>>
+    fun getContactWithRatingByScoundrelId(scoundrelId: Int): Flow<List<ScoundrelContactWithRatingView>>
+
+    @Query("SELECT * from contacts inner join CrewContactCrossRef on contacts.contactId = CrewContactCrossRef.contactId where CrewContactCrossRef.crewId = :crewId")
+    fun getContactWithRatingByCrewId(crewId:Int):Flow<List<CrewContactWithRatingView>>
 
 
 }

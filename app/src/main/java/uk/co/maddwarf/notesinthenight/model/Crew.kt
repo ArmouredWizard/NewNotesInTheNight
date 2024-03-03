@@ -16,7 +16,7 @@ data class Crew(
     val huntingGrounds: String = "",
     val crewAbilities: List<CrewAbility> = listOf(),
 
-    val contacts: List<Contact> = listOf(),
+    val contacts: List<ContactWithRating> = listOf(),
 
     val upgrades: List<CrewUpgrade> = listOf()
 )

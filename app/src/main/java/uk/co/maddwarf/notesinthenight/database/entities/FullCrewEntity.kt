@@ -16,12 +16,12 @@ data class FullCrewEntity(
     val crewabilities: List<CrewAbilityEntity>,
 
 
-    @Relation(
+/*    @Relation(
         parentColumn = "crewId",
         entityColumn = "contactId",
         associateBy = Junction(CrewContactCrossRef::class)
     )
-    val crewcontacts: List<ContactEntity>,
+    val crewcontacts: List<ContactEntity>,*/
 
     @Relation(
         parentColumn = "crewId",
@@ -34,7 +34,14 @@ data class FullCrewEntity(
         parentColumn = "crewId",
         entityColumn = "scoundrelId",
     )
-    val scoundrels: List<ScoundrelEntity> = listOf()
+    val scoundrels: List<ScoundrelEntity> = listOf(),
+
+    @Relation(
+        parentColumn = "crewId",
+        entityColumn = "contactId",
+        associateBy = Junction(CrewContactCrossRef::class)
+    )
+    val contacts: List<CrewContactWithRatingView>
 )
 
 
@@ -53,14 +60,15 @@ fun FullCrewEntity.toCrew(): Crew = Crew(
     crewAbilities = crewabilities.map {
         it.toCrewAbility()
     },
-    contacts = crewcontacts.map {
-        it.toContact()
+    contacts = contacts.map {
+        it.toContactWithRating()
     },
     upgrades = crewupgrades.map {
         it.toCrewUpgrade()
     }
 
 )
+/*
 
 fun Crew.toFullCrewEntity(): FullCrewEntity =
     FullCrewEntity(
@@ -81,7 +89,7 @@ fun Crew.toFullCrewEntity(): FullCrewEntity =
         crewabilities = crewAbilities.map {
             it.toCrewAbilityEntity()
         },
-        crewcontacts = contacts.map {
+        contacts = contacts.map {
             it.toContactEntity()
         },
         crewupgrades = upgrades.map {
@@ -89,3 +97,4 @@ fun Crew.toFullCrewEntity(): FullCrewEntity =
         }
     )
 
+*/

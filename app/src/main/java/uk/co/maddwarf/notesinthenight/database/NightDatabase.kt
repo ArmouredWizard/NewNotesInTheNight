@@ -5,10 +5,11 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import uk.co.maddwarf.notesinthenight.database.converters.Converters
 import uk.co.maddwarf.notesinthenight.database.entities.ContactEntity
-import uk.co.maddwarf.notesinthenight.database.entities.ContactWithRatingView
+import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelContactWithRatingView
 import uk.co.maddwarf.notesinthenight.database.entities.CrewAbilityCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.CrewAbilityEntity
 import uk.co.maddwarf.notesinthenight.database.entities.CrewContactCrossRef
+import uk.co.maddwarf.notesinthenight.database.entities.CrewContactWithRatingView
 import uk.co.maddwarf.notesinthenight.database.entities.CrewEntity
 import uk.co.maddwarf.notesinthenight.database.entities.CrewUpgradeCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.CrewUpgradeEntity
@@ -42,9 +43,10 @@ import uk.co.maddwarf.notesinthenight.database.entities.TagEntity
         NoteCrewCrossRef::class
     ],
     views = [
-        ContactWithRatingView::class
+        ScoundrelContactWithRatingView::class,
+        CrewContactWithRatingView::class
     ],
-    version = 20,
+    version = 21,
     exportSchema = false
 )
 

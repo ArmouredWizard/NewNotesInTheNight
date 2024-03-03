@@ -129,8 +129,7 @@ fun ScoundrelDetailsBody(
     contactsList:List<ContactWithRating>
 ) {
 
-    Log.d("SCOUNDREL DETAILS", detailsUiState.scoundrelDetails.toString())
-    Log.d("CONTACTS DETAILS", contactsList.toString())
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -353,11 +352,6 @@ fun ScoundrelDetails(
                     Pair("Contact Description", chosenContact.contactDescription),
                     Pair("Contact Rating", ratingText)
                 ),
-
-    /*            firstTextTitle = "Contact Name",
-                firstText = chosenContact.name,
-                secondTextTitle = "Contact Description",
-                secondText = chosenContact.description,*/
                 onDismiss = { showContactPopUp = false }
             )
         }

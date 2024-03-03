@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -46,7 +44,6 @@ import uk.co.maddwarf.notesinthenight.model.Scoundrel
 import uk.co.maddwarf.notesinthenight.model.Tag
 import uk.co.maddwarf.notesinthenight.ui.composables.MyButton
 import uk.co.maddwarf.notesinthenight.ui.composables.TextEntryRowWithInfoIcon
-import uk.co.maddwarf.notesinthenight.ui.composables.TextEntryWithSpinner
 import uk.co.maddwarf.notesinthenight.ui.composables.TitleBlock
 import uk.co.maddwarf.notesinthenight.ui.composables.crew.MyCrewSpinner
 import uk.co.maddwarf.notesinthenight.ui.composables.scoundrel.MyScoundrelSpinner

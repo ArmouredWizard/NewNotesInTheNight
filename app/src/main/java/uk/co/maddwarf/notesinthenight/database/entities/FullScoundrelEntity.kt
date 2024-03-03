@@ -26,7 +26,7 @@ data class FullScoundrelEntity(
         entityColumn = "contactId",
         associateBy = Junction(ScoundrelContactCrossRef::class)
     )
-    val contacts: List<ContactWithRatingView>
+    val contacts: List<ScoundrelContactWithRatingView>
 )
 
 fun FullScoundrelEntity.toScoundrel(): Scoundrel {

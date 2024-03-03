@@ -122,5 +122,8 @@ class ScoundrelUseCase @Inject constructor(private val nightRepository: NightRep
     fun getContactWithRatingByScoundrelId(scoundrelId: Int):Flow<List<ContactWithRating>> =
         nightRepository.getContactWithRatingByScoundrelId(scoundrelId)
 
+    fun getContactWithRatingByCrewId(crewId: Int):Flow<List<ContactWithRating>> =
+        nightRepository.getContactWithRatingByCrewId(crewId)
+
 
 }

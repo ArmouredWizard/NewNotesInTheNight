@@ -30,17 +30,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import uk.co.maddwarf.notesinthenight.R
 import uk.co.maddwarf.notesinthenight.model.Contact
+import uk.co.maddwarf.notesinthenight.model.ContactWithRating
 import uk.co.maddwarf.notesinthenight.model.Crew
 import uk.co.maddwarf.notesinthenight.model.CrewAbility
 import uk.co.maddwarf.notesinthenight.model.CrewUpgrade
+import uk.co.maddwarf.notesinthenight.model.NameDescrRatingResult
+import uk.co.maddwarf.notesinthenight.model.toContactWithRating
 import uk.co.maddwarf.notesinthenight.ui.composables.DeleteConfirmationDialog
 import uk.co.maddwarf.notesinthenight.ui.composables.MyButton
+import uk.co.maddwarf.notesinthenight.ui.composables.NameAndDescrAndRatingEntryDialog
 import uk.co.maddwarf.notesinthenight.ui.composables.NameAndDescrEntryDialog
 import uk.co.maddwarf.notesinthenight.ui.composables.TextEntryRowWithInfoIcon
 import uk.co.maddwarf.notesinthenight.ui.composables.TextEntryWithSpinner
 import uk.co.maddwarf.notesinthenight.ui.composables.TitleBlock
 import uk.co.maddwarf.notesinthenight.ui.composables.TraitDots
 import uk.co.maddwarf.notesinthenight.ui.composables.contact.ContactItem
+import uk.co.maddwarf.notesinthenight.ui.composables.contact.ContactWithRatingItem
 import uk.co.maddwarf.notesinthenight.ui.composables.contact.MyContactSpinner
 import uk.co.maddwarf.notesinthenight.ui.composables.crew.MyCrewAbilitySpinner
 import uk.co.maddwarf.notesinthenight.ui.composables.crew.MyCrewUpgradeSpinner
@@ -448,9 +453,8 @@ fun CrewContactsBlock(
     crewDetails: Crew,
     everyContactList: List<Contact>,
 ) {
-    var newContact by remember { mutableStateOf(Contact()) }
+    var newContact by remember { mutableStateOf(ContactWithRating()) }
     var showContactDialog by remember { mutableStateOf(false) }
-
 
     var everyContactNameList: MutableList<Contact> = mutableListOf()
     everyContactList.forEach {
@@ -463,37 +467,42 @@ fun CrewContactsBlock(
     }
 
     fun onContactChange(contactName: String) {
-        newContact = newContact.copy(name = contactName)
+        newContact = newContact.copy(contactName = contactName)
     }
 
     fun onDescriptionChange(description: String) {
-        newContact = newContact.copy(description = description)
+        newContact = newContact.copy(contactDescription = description)
     }
 
-    fun doNewContactFromPair(info: Pair<String, String>) {
+    fun onRatingChange(rating: Int) {
+        newContact = newContact.copy(rating = rating)
+    }
+
+    fun doNewContactFromResult(info: NameDescrRatingResult) {
         showContactDialog = false
         onValueChange(
             crewDetails.copy(
-                contacts = crewDetails.contacts + Contact(
-                    name = info.first,
-                    description = info.second
+                contacts = crewDetails.contacts + ContactWithRating(
+                    connectionId = crewDetails.crewId,
+                    contactName = info.name,
+                    contactDescription = info.descr,
+                    rating = info.rating
                 )
             )
         )
-        newContact = Contact()
     }
 
     var showRemoveContactDialog by remember { mutableStateOf(false) }
-    var chosenContact by remember { mutableStateOf(Contact()) }
+    var chosenContact by remember { mutableStateOf(ContactWithRating()) }
 
-    fun contactDeleteDialogClick(contact: Contact) {
+    fun contactDeleteDialogClick(contact: ContactWithRating) {
         chosenContact = contact
         showRemoveContactDialog = !showRemoveContactDialog
     }
 
-    fun doRemoveContact(contact: Contact) {
+    fun doRemoveContact(contact: ContactWithRating) {
         showRemoveContactDialog = false
-        val newContactList = mutableListOf<Contact>()
+        val newContactList = mutableListOf<ContactWithRating>()
         crewDetails.contacts.forEach {
             if (it != contact) newContactList.add(it)
         }
@@ -507,7 +516,7 @@ fun CrewContactsBlock(
     if (showRemoveContactDialog) {
         DeleteConfirmationDialog(
             title = "Contact",
-            name = chosenContact.name,
+            name = chosenContact.contactName,
             onAccept = { doRemoveContact(chosenContact) },
             onDismiss = { showRemoveContactDialog = false },
             deleteType = "Remove"
@@ -518,19 +527,25 @@ fun CrewContactsBlock(
 
     TitleBlock(title = "", text = "Contacts")
     contactList.forEach { it ->
-        ContactItem(
+        fun editRatingClick(rating: Int) {
+            it.rating = rating
+            showRemoveContactDialog = true
+            showRemoveContactDialog = false //hack to force recompose
+        }
+        ContactWithRatingItem(
             contact = it,
             displayDeleteContactDialog = { contactDeleteDialogClick(it) },
-            onClick = {}//TODO
+            onClick = {},//TODO
+            onRatingClick = { editRatingClick(it) }
         )
     }
 
     var contactExpanded by remember { mutableStateOf(false) }
-    var chosenExistingContact by remember { mutableStateOf(Contact()) }
+    var chosenExistingContact by remember { mutableStateOf(ContactWithRating()) }
     fun contactChooser(contact: Contact) {
         contactExpanded = false
-        chosenExistingContact = contact
-        onValueChange(crewDetails.copy(contacts = crewDetails.contacts + contact))
+        chosenExistingContact = contact.toContactWithRating()
+        onValueChange(crewDetails.copy(contacts = crewDetails.contacts + chosenExistingContact))
     }
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -559,18 +574,20 @@ fun CrewContactsBlock(
         }
     }
     if (showContactDialog) {
-        NameAndDescrEntryDialog(
+        NameAndDescrAndRatingEntryDialog(
             title = "New Contact",
-            name = newContact.name,
+            name = newContact.contactName,
             nameLabel = "Contact Name",
             nameHint = "Name the new Contact",
-            description = newContact.description,
+            description = newContact.contactDescription,
             descriptionLabel = "Contact Description",
             descriptionHint = "Describe the Contact?",
             onDismiss = { showContactDialog = !showContactDialog },
-            onAccept = { doNewContactFromPair(it) },
+            onAccept = { doNewContactFromResult(it) },
             onNameChange = { onContactChange(it) },
             onDescriptionChange = { onDescriptionChange(it) },
+            rating = newContact.rating,
+            onRatingChange = { onRatingChange(it) },
         )
     }
 
