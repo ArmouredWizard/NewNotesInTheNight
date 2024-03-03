@@ -2,6 +2,7 @@ package uk.co.maddwarf.notesinthenight.domain
 
 import kotlinx.coroutines.flow.Flow
 import uk.co.maddwarf.notesinthenight.model.Contact
+import uk.co.maddwarf.notesinthenight.model.ContactWithRating
 import uk.co.maddwarf.notesinthenight.model.Crew
 import uk.co.maddwarf.notesinthenight.model.CrewAbility
 import uk.co.maddwarf.notesinthenight.model.CrewUpgrade
@@ -117,6 +118,9 @@ class ScoundrelUseCase @Inject constructor(private val nightRepository: NightRep
     suspend fun saveEditedNote(note: Note) {
         nightRepository.saveEditedNote(note)
     }
+
+    fun getContactWithRatingByScoundrelId(scoundrelId: Int):Flow<List<ContactWithRating>> =
+        nightRepository.getContactWithRatingByScoundrelId(scoundrelId)
 
 
 }

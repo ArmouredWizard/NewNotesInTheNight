@@ -44,17 +44,20 @@ import kotlinx.collections.immutable.persistentListOf
 import uk.co.maddwarf.notesinthenight.NotesInTheNightTopAppBar
 import uk.co.maddwarf.notesinthenight.R
 import uk.co.maddwarf.notesinthenight.model.Contact
+import uk.co.maddwarf.notesinthenight.model.ContactWithRating
 import uk.co.maddwarf.notesinthenight.model.Scoundrel
 import uk.co.maddwarf.notesinthenight.model.SpecialAbility
 import uk.co.maddwarf.notesinthenight.navigation.NavigationDestination
 import uk.co.maddwarf.notesinthenight.ui.composables.ActionBlock
 import uk.co.maddwarf.notesinthenight.ui.composables.CoinBlock
 import uk.co.maddwarf.notesinthenight.ui.composables.InfoPopUp
+import uk.co.maddwarf.notesinthenight.ui.composables.InfoPopUpVariable
 import uk.co.maddwarf.notesinthenight.ui.composables.MyButton
 import uk.co.maddwarf.notesinthenight.ui.composables.TraitText
 import uk.co.maddwarf.notesinthenight.ui.composables.XpBlock
 import uk.co.maddwarf.notesinthenight.ui.composables.ability.AbilityItem
 import uk.co.maddwarf.notesinthenight.ui.composables.contact.ContactItem
+import uk.co.maddwarf.notesinthenight.ui.composables.contact.ContactWithRatingItem
 import uk.co.maddwarf.notesinthenight.ui.composables.crew.CrewInfoDialog
 
 object ScoundrelDetailsDestination : NavigationDestination {
@@ -76,6 +79,8 @@ fun ScoundrelDetailsScreen(
     viewModel: ScoundrelDetailsViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.detailsUiState.collectAsState()
+
+    val contactsList:List<ContactWithRating> by viewModel.contactsList.collectAsState(initial = listOf())
 
     Scaffold(
         topBar = {
@@ -111,6 +116,7 @@ fun ScoundrelDetailsScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState()),
             navigateToCrewDetails = navigateToCrewDetails,
+            contactsList = contactsList
         )
     }//end scaffold
 }//end Scoundrel Details Screen
@@ -120,9 +126,11 @@ fun ScoundrelDetailsBody(
     detailsUiState: ScoundrelDetailsUiState,
     modifier: Modifier,
     navigateToCrewDetails: (Int) -> Unit,
+    contactsList:List<ContactWithRating>
 ) {
 
     Log.d("SCOUNDREL DETAILS", detailsUiState.scoundrelDetails.toString())
+    Log.d("CONTACTS DETAILS", contactsList.toString())
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -136,6 +144,7 @@ fun ScoundrelDetailsBody(
         ) {
             ScoundrelDetails(
                 scoundrel = detailsUiState.scoundrelDetails,
+                contactsList = contactsList,
                 modifier = Modifier.fillMaxWidth(),
                 navigateToCrewDetails = navigateToCrewDetails,
             )
@@ -146,6 +155,7 @@ fun ScoundrelDetailsBody(
 @Composable
 fun ScoundrelDetails(
     scoundrel: Scoundrel,
+    contactsList: List<ContactWithRating>,
     modifier: Modifier,
     navigateToCrewDetails: (Int) -> Unit,
 ) {
@@ -322,26 +332,41 @@ fun ScoundrelDetails(
         }//end IF Abilities block
 
         var showContactPopUp by remember { mutableStateOf(false) }
-        var chosenContact by remember { mutableStateOf(Contact()) }
-        fun doContactPopUp(contact: Contact) {
+        var chosenContact by remember { mutableStateOf(ContactWithRating()) }
+        fun doContactPopUp(contact: ContactWithRating) {
             chosenContact = contact
             showContactPopUp = true
         }
 
         if (showContactPopUp) {
-            InfoPopUp(
+            val ratingText = when (chosenContact.rating){
+                -1 -> "Poor"
+                0 -> "Neutral"
+                1 -> "Good"
+                else -> "undefined"
+            }
+            InfoPopUpVariable(
                 title = "Contact",
-                firstTextTitle = "Contact Name",
+
+                entries = listOf(
+                    Pair("Contact Name", chosenContact.contactName),
+                    Pair("Contact Description", chosenContact.contactDescription),
+                    Pair("Contact Rating", ratingText)
+                ),
+
+    /*            firstTextTitle = "Contact Name",
                 firstText = chosenContact.name,
                 secondTextTitle = "Contact Description",
-                secondText = chosenContact.description,
+                secondText = chosenContact.description,*/
                 onDismiss = { showContactPopUp = false }
             )
         }
 
         var showContactsBlock by remember { mutableStateOf(false) }
 
-        val contactList = scoundrel.contacts
+        //val contactList = scoundrel.contacts
+        val contactList = contactsList
+
         MyButton(
             onClick = { showContactsBlock = !showContactsBlock },
             text = "Contacts",
@@ -360,11 +385,13 @@ fun ScoundrelDetails(
                 if (contactList.isNotEmpty()) {
                     contactList.forEach { it ->
                         Spacer(modifier = Modifier.height(5.dp))
-                        ContactItem(
+                        ContactWithRatingItem(
                             contact = it,
                             enableDelete = false,
                             onClick = { doContactPopUp(it) },
-                            displayDeleteContactDialog = {}
+                            displayDeleteContactDialog = {},
+                            onRatingClick = {},//todo
+                            changeRating = false
                         )
                         Spacer(modifier = Modifier.height(5.dp))
                     }

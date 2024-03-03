@@ -1,5 +1,6 @@
 package uk.co.maddwarf.notesinthenight.ui.screens.scoundrel
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,13 +36,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.persistentListOf
 import uk.co.maddwarf.notesinthenight.model.Contact
+import uk.co.maddwarf.notesinthenight.model.ContactWithRating
 import uk.co.maddwarf.notesinthenight.model.Crew
+import uk.co.maddwarf.notesinthenight.model.NameDescrRatingResult
 import uk.co.maddwarf.notesinthenight.model.Scoundrel
 import uk.co.maddwarf.notesinthenight.model.SpecialAbility
+import uk.co.maddwarf.notesinthenight.model.toContactWithRating
 import uk.co.maddwarf.notesinthenight.ui.composables.ActionBlock
 import uk.co.maddwarf.notesinthenight.ui.composables.CoinBlock
 import uk.co.maddwarf.notesinthenight.ui.composables.DeleteConfirmationDialog
 import uk.co.maddwarf.notesinthenight.ui.composables.MyButton
+import uk.co.maddwarf.notesinthenight.ui.composables.NameAndDescrAndRatingEntryDialog
 import uk.co.maddwarf.notesinthenight.ui.composables.NameAndDescrEntryDialog
 import uk.co.maddwarf.notesinthenight.ui.composables.TextEntryRowWithInfoIcon
 import uk.co.maddwarf.notesinthenight.ui.composables.TextEntryWithSpinner
@@ -49,7 +54,7 @@ import uk.co.maddwarf.notesinthenight.ui.composables.TitleBlock
 import uk.co.maddwarf.notesinthenight.ui.composables.XpBlock
 import uk.co.maddwarf.notesinthenight.ui.composables.ability.AbilityItem
 import uk.co.maddwarf.notesinthenight.ui.composables.ability.MyAbilitySpinner
-import uk.co.maddwarf.notesinthenight.ui.composables.contact.ContactItem
+import uk.co.maddwarf.notesinthenight.ui.composables.contact.ContactWithRatingItem
 import uk.co.maddwarf.notesinthenight.ui.composables.contact.MyContactSpinner
 import uk.co.maddwarf.notesinthenight.ui.composables.crew.MyCrewSpinner
 
@@ -557,7 +562,7 @@ fun ContactsBlock(
     scoundrelDetails: Scoundrel,
     everyContactList: List<Contact>,
 ) {
-    var newContact by remember { mutableStateOf(Contact()) }
+    var newContact by remember { mutableStateOf(ContactWithRating()) }
     var showContactDialog by remember { mutableStateOf(false) }
 
     var everyContactNameList: MutableList<Contact> = mutableListOf()
@@ -571,37 +576,44 @@ fun ContactsBlock(
     }
 
     fun onContactChange(contactName: String) {
-        newContact = newContact.copy(name = contactName)
+        newContact = newContact.copy(contactName = contactName)
     }
 
     fun onDescriptionChange(description: String) {
-        newContact = newContact.copy(description = description)
+        newContact = newContact.copy(contactDescription = description)
     }
 
-    fun doNewContactFromPair(info: Pair<String, String>) {
+    fun onRatingChange(rating:Int){
+        newContact = newContact.copy(rating = rating)
+    }
+
+    fun doNewContactFromResult(info: NameDescrRatingResult) {
+        Log.d("INFO", info.toString())
         showContactDialog = false
         onValueChange(
             scoundrelDetails.copy(
-                contacts = scoundrelDetails.contacts + Contact(
-                    name = info.first,
-                    description = info.second
+                contacts = scoundrelDetails.contacts + ContactWithRating(
+                    scoundrelId = scoundrelDetails.scoundrelId,
+                    contactName = info.name,
+                    contactDescription = info.descr,
+                    rating = info.rating
                 )
             )
         )
-        newContact = Contact()
+        newContact = ContactWithRating()
     }
 
     var showRemoveContactDialog by remember { mutableStateOf(false) }
-    var chosenContact by remember { mutableStateOf(Contact()) }
+    var chosenContact by remember { mutableStateOf(ContactWithRating()) }
 
-    fun contactDeleteDialogClick(contact: Contact) {
+    fun contactDeleteDialogClick(contact: ContactWithRating) {
         chosenContact = contact
         showRemoveContactDialog = !showRemoveContactDialog
     }
 
-    fun doRemoveContact(contact: Contact) {
+    fun doRemoveContact(contact: ContactWithRating) {
         showRemoveContactDialog = false
-        val newContactList = mutableListOf<Contact>()
+        val newContactList = mutableListOf<ContactWithRating>()
         scoundrelDetails.contacts.forEach {
             if (it != contact) newContactList.add(it)
         }
@@ -611,7 +623,7 @@ fun ContactsBlock(
     if (showRemoveContactDialog) {
         DeleteConfirmationDialog(
             title = "Contact",
-            name = chosenContact.name,
+            name = chosenContact.contactName,
             onAccept = { doRemoveContact(chosenContact) },
             onDismiss = { showRemoveContactDialog = false },
             deleteType = "Remove"
@@ -622,19 +634,25 @@ fun ContactsBlock(
 
     TitleBlock(title = "", text = "Contacts")
     contactList.forEach { it ->
-        ContactItem(
+        fun editRatingClick(rating:Int){
+            it.rating = rating
+            showRemoveContactDialog = true
+            showRemoveContactDialog = false //hack to force recompose
+        }
+        ContactWithRatingItem(
             contact = it,
             displayDeleteContactDialog = { contactDeleteDialogClick(it) },
+            onRatingClick = {editRatingClick(it)},
             onClick = {}
         )
     }
 
     var contactExpanded by remember { mutableStateOf(false) }
-    var chosenExistingContact by remember { mutableStateOf(Contact()) }
+    var chosenExistingContact by remember { mutableStateOf(ContactWithRating()) }
     fun contactChooser(contact: Contact) {
         contactExpanded = false
-        chosenExistingContact = contact
-        onValueChange(scoundrelDetails.copy(contacts = scoundrelDetails.contacts + contact))
+        chosenExistingContact = contact.toContactWithRating()
+        onValueChange(scoundrelDetails.copy(contacts = scoundrelDetails.contacts + chosenExistingContact))
     }
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -663,13 +681,16 @@ fun ContactsBlock(
         }
     }
     if (showContactDialog) {
-        NameAndDescrEntryDialog(
-            name = newContact.name,
-            description = newContact.description,
+      //  NameAndDescrEntryDialog(
+        NameAndDescrAndRatingEntryDialog(
+            name = newContact.contactName,
+            description = newContact.contactDescription,
+            rating = newContact.rating,
             onDismiss = { showContactDialog = !showContactDialog },
-            onAccept = { doNewContactFromPair(it) },
+            onAccept = { doNewContactFromResult(it) },
             onNameChange = { onContactChange(it) },
             onDescriptionChange = { onDescriptionChange(it) },
+            onRatingChange = {onRatingChange(it)},
             title = "New Contact",
             nameLabel = "Contact name",
             nameHint = "Name this Contact",

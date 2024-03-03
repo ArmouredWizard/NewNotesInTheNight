@@ -1,5 +1,6 @@
 package uk.co.maddwarf.notesinthenight.ui.screens.scoundrel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -48,6 +49,7 @@ class ScoundrelEditViewModel @Inject constructor(
     val crewList = scoundrelUseCase.getListOfCrews()
 
     fun updateIntermediateUiState(scoundrelDetails: Scoundrel) {
+        Log.d("UPADATE SCOUNDREL EDIT", scoundrelDetails.contacts.toString())
         intermediateScoundrelUiState = IntermediateScoundrelUiState(
             intermediateScoundrelDetails = scoundrelDetails,
             isEntryValid = validateInput(scoundrelDetails)

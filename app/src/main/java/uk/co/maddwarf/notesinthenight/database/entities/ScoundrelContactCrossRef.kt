@@ -5,5 +5,6 @@ import androidx.room.Entity
 @Entity(primaryKeys = ["scoundrelId", "contactId"])
 data class ScoundrelContactCrossRef(
     val scoundrelId: Int,
-    val contactId: Int
+    val contactId: Int,
+    val rating: Int = 0
 )

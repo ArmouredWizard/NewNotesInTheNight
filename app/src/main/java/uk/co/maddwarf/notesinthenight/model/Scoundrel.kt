@@ -30,7 +30,7 @@ data class Scoundrel(
 
     val specialAbilities: List<SpecialAbility> = listOf(),
 
-    var contacts: List<Contact> = listOf(),
+    var contacts: List<ContactWithRating> = listOf(),
 
     var crew: Crew? = null
 )

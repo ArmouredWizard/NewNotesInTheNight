@@ -26,47 +26,50 @@ data class FullScoundrelEntity(
         entityColumn = "contactId",
         associateBy = Junction(ScoundrelContactCrossRef::class)
     )
-    val contacts: List<ContactEntity>
+    val contacts: List<ContactWithRatingView>
 )
 
-fun FullScoundrelEntity.toScoundrel(): Scoundrel = Scoundrel(
-    scoundrelId = scoundrelEntity.scoundrelId,
-    name = scoundrelEntity.name,
+fun FullScoundrelEntity.toScoundrel(): Scoundrel {
+    val newContactsList = contacts.filter { it.scoundrelId == scoundrelEntity.scoundrelId }
+    return Scoundrel(
+        scoundrelId = scoundrelEntity.scoundrelId,
+        name = scoundrelEntity.name,
 
-    playbook = scoundrelEntity.playbook,
-    heritage = scoundrelEntity.heritage,
-    background = scoundrelEntity.background,
+        playbook = scoundrelEntity.playbook,
+        heritage = scoundrelEntity.heritage,
+        background = scoundrelEntity.background,
 
-    hunt = scoundrelEntity.hunt,
-    study = scoundrelEntity.study,
-    survey = scoundrelEntity.survey,
-    tinker = scoundrelEntity.tinker,
-    finesse = scoundrelEntity.finesse,
-    prowl = scoundrelEntity.prowl,
-    skirmish = scoundrelEntity.skirmish,
-    wreck = scoundrelEntity.wreck,
-    attune = scoundrelEntity.attune,
-    command = scoundrelEntity.command,
-    consort = scoundrelEntity.consort,
-    sway = scoundrelEntity.sway,
+        hunt = scoundrelEntity.hunt,
+        study = scoundrelEntity.study,
+        survey = scoundrelEntity.survey,
+        tinker = scoundrelEntity.tinker,
+        finesse = scoundrelEntity.finesse,
+        prowl = scoundrelEntity.prowl,
+        skirmish = scoundrelEntity.skirmish,
+        wreck = scoundrelEntity.wreck,
+        attune = scoundrelEntity.attune,
+        command = scoundrelEntity.command,
+        consort = scoundrelEntity.consort,
+        sway = scoundrelEntity.sway,
 
-    coin = scoundrelEntity.coin,
+        coin = scoundrelEntity.coin,
 
-    insightXp = scoundrelEntity.insightXp,
-    prowessXp = scoundrelEntity.prowessXp,
-    resolveXp = scoundrelEntity.resolveXp,
-    playbookXp = scoundrelEntity.playbookXp,
+        insightXp = scoundrelEntity.insightXp,
+        prowessXp = scoundrelEntity.prowessXp,
+        resolveXp = scoundrelEntity.resolveXp,
+        playbookXp = scoundrelEntity.playbookXp,
 
-    crew = crew?.toCrew(),
+        crew = crew?.toCrew(),
 
-    specialAbilities = specialabilities.map {
-        it.toSpecialAbility()
-    },
+        specialAbilities = specialabilities.map {
+            it.toSpecialAbility()
+        },
 
-    contacts = contacts.map {
-        it.toContact()
-    }
-)
+        contacts = newContactsList.map {
+            it.toContactWithRating()
+        }
+    )
+}
 
 fun Scoundrel.toFullScoundrelEntity(): ScoundrelEntity = ScoundrelEntity(
     scoundrelId = scoundrelId,
@@ -97,6 +100,5 @@ fun Scoundrel.toFullScoundrelEntity(): ScoundrelEntity = ScoundrelEntity(
     playbookXp = playbookXp,
 
     crewId = crew?.crewId ?: 0
-
 
 )

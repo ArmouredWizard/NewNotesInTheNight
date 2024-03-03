@@ -30,6 +30,8 @@ class ScoundrelDetailsViewModel @Inject constructor(
                 initialValue = ScoundrelDetailsUiState()
             )
 
+    val contactsList = scoundrelUseCase.getContactWithRatingByScoundrelId(scoundrelId)
+
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }

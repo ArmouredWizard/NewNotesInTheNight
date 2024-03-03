@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import uk.co.maddwarf.notesinthenight.model.Contact
+import uk.co.maddwarf.notesinthenight.model.ContactWithRating
 import uk.co.maddwarf.notesinthenight.ui.composables.MyButton
 
 @Composable

@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import uk.co.maddwarf.notesinthenight.model.Contact
+import uk.co.maddwarf.notesinthenight.model.ContactWithRating
 
 @Composable
 fun ContactItem(

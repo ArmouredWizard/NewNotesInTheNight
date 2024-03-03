@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import uk.co.maddwarf.notesinthenight.database.entities.ContactEntity
+import uk.co.maddwarf.notesinthenight.database.entities.ContactWithRatingView
 import uk.co.maddwarf.notesinthenight.database.entities.CrewAbilityCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.CrewAbilityEntity
 import uk.co.maddwarf.notesinthenight.database.entities.CrewContactCrossRef
@@ -55,10 +56,10 @@ interface NightDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun saveCrew(crewEntity: CrewEntity): Long
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)//todo check on conflict
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAbility(abilityEntity: SpecialAbilityEntity): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)//todo check on conflict
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertScoundrelAbilityCrossRef(scoundrelAbilityCrossRef: ScoundrelAbilityCrossRef)
 
     @Query("DELETE from ScoundrelAbilityCrossRef where scoundrelId = :id")
@@ -191,7 +192,10 @@ interface NightDao {
 
     @Transaction
     @Query("DELETE from NoteCrewCrossRef where noteId = :noteId")
-    suspend fun deleteNoteCrewCrossRefByNoteId(noteId:Int)
+    suspend fun deleteNoteCrewCrossRefByNoteId(noteId: Int)
+
+    @Query("SELECT * from contacts inner join ScoundrelContactCrossRef on contacts.contactId = ScoundrelContactCrossRef.contactId where ScoundrelContactCrossRef.scoundrelId = :scoundrelId")
+    fun getContactWithRatingByScoundrelId(scoundrelId: Int): Flow<List<ContactWithRatingView>>
 
 
 }

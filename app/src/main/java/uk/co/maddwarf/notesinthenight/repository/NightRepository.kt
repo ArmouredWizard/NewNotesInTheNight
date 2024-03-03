@@ -13,9 +13,9 @@ import uk.co.maddwarf.notesinthenight.database.entities.NoteScoundrelCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.NoteTagCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelAbilityCrossRef
 import uk.co.maddwarf.notesinthenight.database.entities.ScoundrelContactCrossRef
-import uk.co.maddwarf.notesinthenight.database.entities.TagEntity
 import uk.co.maddwarf.notesinthenight.database.entities.toContact
 import uk.co.maddwarf.notesinthenight.database.entities.toContactEntity
+import uk.co.maddwarf.notesinthenight.database.entities.toContactWithRating
 import uk.co.maddwarf.notesinthenight.database.entities.toCrew
 import uk.co.maddwarf.notesinthenight.database.entities.toCrewAbility
 import uk.co.maddwarf.notesinthenight.database.entities.toCrewAbilityEntity
@@ -31,6 +31,7 @@ import uk.co.maddwarf.notesinthenight.database.entities.toSpecialAbilityEntity
 import uk.co.maddwarf.notesinthenight.database.entities.toTag
 import uk.co.maddwarf.notesinthenight.database.entities.toTagEntity
 import uk.co.maddwarf.notesinthenight.model.Contact
+import uk.co.maddwarf.notesinthenight.model.ContactWithRating
 import uk.co.maddwarf.notesinthenight.model.Crew
 import uk.co.maddwarf.notesinthenight.model.CrewAbility
 import uk.co.maddwarf.notesinthenight.model.CrewUpgrade
@@ -76,6 +77,7 @@ interface NightRepository {
     suspend fun saveFullNote(note: Note)
     fun getAllFullNotes(): Flow<List<Note>>
     suspend fun saveEditedNote(note: Note)
+    fun getContactWithRatingByScoundrelId(scoundrelId: Int): Flow<List<ContactWithRating>>
 }
 
 class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : NightRepository {
@@ -124,12 +126,13 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
         scoundrel.contacts.forEach { contact ->
             var contactId = nightDao.insertContact(contact.toContactEntity())
             if (contactId == -1L) {
-                contactId = contact.id.toLong()
+                contactId = contact.contactId.toLong()
             }
             nightDao.insertScoundrelContactCrossRef(
                 ScoundrelContactCrossRef(
                     scoundrelId = scoundrelId,
-                    contactId = contactId.toInt()
+                    contactId = contactId.toInt(),
+                    rating = contact.rating
                 )
             )
         }
@@ -197,12 +200,13 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
         scoundrel.contacts.forEach { contact ->
             var contactId = nightDao.saveContact(contact.toContactEntity())
             if (contactId == -1L) {
-                contactId = contact.id.toLong()
+                contactId = contact.contactId.toLong()
             }
             nightDao.insertScoundrelContactCrossRef(
                 ScoundrelContactCrossRef(
                     scoundrelId = scoundrel.scoundrelId,
-                    contactId = contactId.toInt()
+                    contactId = contactId.toInt(),
+                    rating = contact.rating
                 )
             )
         }
@@ -424,7 +428,7 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
             )
         }
 //todo scoundrel code
-        note.scoundrels.forEach{scoundrel->
+        note.scoundrels.forEach { scoundrel ->
             nightDao.insertNoteScoundrelCrossRef(
                 NoteScoundrelCrossRef(
                     noteId = noteId.toInt(),
@@ -435,7 +439,7 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
 
         //todo crew code
 
-        note.crews.forEach{crew->
+        note.crews.forEach { crew ->
             nightDao.insertNoteCrewCrossRef(
                 NoteCrewCrossRef(
                     noteId = noteId.toInt(),
@@ -466,7 +470,7 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
 
         //todo scoundrel code
         nightDao.deleteNoteScoundrelCrossRefByNoteId(note.noteId)
-        note.scoundrels.forEach{scoundrel->
+        note.scoundrels.forEach { scoundrel ->
             nightDao.insertNoteScoundrelCrossRef(
                 NoteScoundrelCrossRef(
                     noteId = note.noteId.toInt(),
@@ -476,8 +480,8 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
         }
 
         //todo crew code
-nightDao.deleteNoteCrewCrossRefByNoteId(note.noteId)
-        note.crews.forEach{crew->
+        nightDao.deleteNoteCrewCrossRefByNoteId(note.noteId)
+        note.crews.forEach { crew ->
             nightDao.insertNoteCrewCrossRef(
                 NoteCrewCrossRef(
                     noteId = note.noteId.toInt(),
@@ -487,5 +491,14 @@ nightDao.deleteNoteCrewCrossRefByNoteId(note.noteId)
         }
 
     }//end save edit note
+
+    override fun getContactWithRatingByScoundrelId(scoundrelId: Int): Flow<List<ContactWithRating>> {
+        Log.d("ID IN REPO", scoundrelId.toString())
+        return nightDao.getContactWithRatingByScoundrelId(scoundrelId).map {
+            it.map { contact ->
+                contact.toContactWithRating()
+            }
+        }
+    }
 
 }

@@ -8,18 +8,18 @@ import uk.co.maddwarf.notesinthenight.model.Contact
 data class ContactEntity(
     @PrimaryKey(autoGenerate = true)
     val contactId: Int = 0,
-    val name: String = "",
-    val description: String = ""
+    val contactName: String = "",
+    val contactDescription: String = ""
 )
 
 fun ContactEntity.toContact(): Contact = Contact(
     id = contactId,
-    name = name,
-    description = description
+    name = contactName,
+    description = contactDescription
 )
 
 fun Contact.toContactEntity(): ContactEntity = ContactEntity(
     contactId = id,
-    name = name,
-    description = description
+    contactName = name,
+    contactDescription = description
 )
