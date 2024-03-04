@@ -358,7 +358,6 @@ fun ScoundrelDetails(
 
         var showContactsBlock by remember { mutableStateOf(false) }
 
-        //val contactList = scoundrel.contacts
         val contactList = contactsList
 
         MyButton(

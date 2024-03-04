@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -75,18 +77,18 @@ fun ScoundrelInputForm(
 
     fun circleClicker(aString: String, aIndex: Int) {
         when (aString) {
-            "Hunt" -> onValueChange(scoundrelDetails.copy(hunt =aIndex))
-            "Study" -> onValueChange(scoundrelDetails.copy(study =aIndex))
-            "Survey" -> onValueChange(scoundrelDetails.copy(survey =aIndex))
-            "Tinker" -> onValueChange(scoundrelDetails.copy(tinker =aIndex))
-            "Finesse" -> onValueChange(scoundrelDetails.copy(finesse =aIndex))
-            "Prowl" -> onValueChange(scoundrelDetails.copy(prowl =aIndex))
-            "Skirmish" -> onValueChange(scoundrelDetails.copy(skirmish =aIndex))
-            "Wreck" -> onValueChange(scoundrelDetails.copy(wreck =aIndex))
-            "Attune" -> onValueChange(scoundrelDetails.copy(attune =aIndex))
-            "Command" -> onValueChange(scoundrelDetails.copy(command =aIndex))
-            "Consort" -> onValueChange(scoundrelDetails.copy(consort =aIndex))
-            "Sway" -> onValueChange(scoundrelDetails.copy(sway =aIndex))
+            "Hunt" -> onValueChange(scoundrelDetails.copy(hunt = aIndex))
+            "Study" -> onValueChange(scoundrelDetails.copy(study = aIndex))
+            "Survey" -> onValueChange(scoundrelDetails.copy(survey = aIndex))
+            "Tinker" -> onValueChange(scoundrelDetails.copy(tinker = aIndex))
+            "Finesse" -> onValueChange(scoundrelDetails.copy(finesse = aIndex))
+            "Prowl" -> onValueChange(scoundrelDetails.copy(prowl = aIndex))
+            "Skirmish" -> onValueChange(scoundrelDetails.copy(skirmish = aIndex))
+            "Wreck" -> onValueChange(scoundrelDetails.copy(wreck = aIndex))
+            "Attune" -> onValueChange(scoundrelDetails.copy(attune = aIndex))
+            "Command" -> onValueChange(scoundrelDetails.copy(command = aIndex))
+            "Consort" -> onValueChange(scoundrelDetails.copy(consort = aIndex))
+            "Sway" -> onValueChange(scoundrelDetails.copy(sway = aIndex))
 
             "Coin" -> onValueChange(scoundrelDetails.copy(coin = aIndex))
 
@@ -153,101 +155,150 @@ fun ScoundrelInputForm(
             itemList = backgroundList
         )
 
-        Box(
-            modifier = modifier
-                .padding(start = 10.dp, end = 10.dp)
-                .clip(shape = RoundedCornerShape(10.dp))
-                //.fillMaxWidth(.7f)
-                .wrapContentWidth()
-                .background(color = Color.DarkGray)
-        ) {
-            Column(
+
+        var showAttributesBlock by remember { mutableStateOf(false) }
+        MyButton(
+            onClick = { showAttributesBlock = !showAttributesBlock },
+            text = "Attributes",
+            trailingIcon = if (showAttributesBlock) {
+                Icons.Default.KeyboardArrowUp
+            } else {
+                Icons.Default.KeyboardArrowDown
+            }
+        )
+
+        if (showAttributesBlock) {
+            Box(
                 modifier = modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(start = 10.dp, end = 10.dp)
+                    .clip(shape = RoundedCornerShape(10.dp))
+                    .wrapContentWidth()
+                    .background(color = Color.DarkGray)
             ) {
-                ActionBlock(
-                    attribute = "Insight",
-                    actions = persistentListOf(
-                        Pair("Hunt", scoundrelDetails.hunt),
-                        Pair("Study", scoundrelDetails.study),
-                        Pair("Survey", scoundrelDetails.survey),
-                        Pair("Tinker", scoundrelDetails.tinker)
-                    ),
-                    onRankClicked = { aString: String, aIndex: Int ->
-                        circleClicker(aString, aIndex)
-                    }
-                )//end ActionBlock
-                ActionBlock(
-                    attribute = "Prowess",
-                    actions = persistentListOf(
-                        Pair("Finesse", scoundrelDetails.finesse),
-                        Pair("Prowl", scoundrelDetails.prowl),
-                        Pair("Skirmish", scoundrelDetails.skirmish),
-                        Pair("Wreck", scoundrelDetails.wreck)
-                    ),
-                    onRankClicked = { aString: String, aIndex: Int ->
-                        circleClicker(aString, aIndex)
-                    }
-                )//end ActionBlock
-                ActionBlock(
-                    attribute = "Resolve",
-                    actions = persistentListOf(
-                        Pair("Attune", scoundrelDetails.attune),
-                        Pair("Command", scoundrelDetails.command),
-                        Pair("Consort", scoundrelDetails.consort),
-                        Pair("Sway", scoundrelDetails.sway)
-                    ),
-                    onRankClicked = { aString: String, aIndex: Int ->
-                        circleClicker(aString, aIndex)
-                    }
-                )//end ActionBlock
+                Column(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    ActionBlock(
+                        attribute = "Insight",
+                        actions = persistentListOf(
+                            Pair("Hunt", scoundrelDetails.hunt),
+                            Pair("Study", scoundrelDetails.study),
+                            Pair("Survey", scoundrelDetails.survey),
+                            Pair("Tinker", scoundrelDetails.tinker)
+                        ),
+                        onRankClicked = { aString: String, aIndex: Int ->
+                            circleClicker(aString, aIndex)
+                        }
+                    )//end ActionBlock
+                    ActionBlock(
+                        attribute = "Prowess",
+                        actions = persistentListOf(
+                            Pair("Finesse", scoundrelDetails.finesse),
+                            Pair("Prowl", scoundrelDetails.prowl),
+                            Pair("Skirmish", scoundrelDetails.skirmish),
+                            Pair("Wreck", scoundrelDetails.wreck)
+                        ),
+                        onRankClicked = { aString: String, aIndex: Int ->
+                            circleClicker(aString, aIndex)
+                        }
+                    )//end ActionBlock
+                    ActionBlock(
+                        attribute = "Resolve",
+                        actions = persistentListOf(
+                            Pair("Attune", scoundrelDetails.attune),
+                            Pair("Command", scoundrelDetails.command),
+                            Pair("Consort", scoundrelDetails.consort),
+                            Pair("Sway", scoundrelDetails.sway)
+                        ),
+                        onRankClicked = { aString: String, aIndex: Int ->
+                            circleClicker(aString, aIndex)
+                        }
+                    )//end ActionBlock
+                }
+            }//end Action Blocks box
+        }//end IF Show attributes block
+
+        var showCoinAndXpBlock by remember { mutableStateOf(false) }
+        MyButton(
+            onClick = { showCoinAndXpBlock = !showCoinAndXpBlock },
+            text = "Coin and XP",
+            trailingIcon = if (showCoinAndXpBlock) {
+                Icons.Default.KeyboardArrowUp
+            } else {
+                Icons.Default.KeyboardArrowDown
             }
-        }//end Action Blocks box
+        )
+        if (showCoinAndXpBlock) {
+            CoinBlock(
+                scoundrelDetails = scoundrelDetails,
+                onRankClicked = { aString: String, aIndex: Int ->
+                    circleClicker(aString, aIndex)
+                }
+            )
 
-        CoinBlock(
-            scoundrelDetails = scoundrelDetails,
-            onRankClicked = { aString: String, aIndex: Int ->
-                circleClicker(aString, aIndex)
+            XpBlock(
+                xpTracks = listOf(
+                    Pair("Insight", scoundrelDetails.insightXp),
+                    Pair("Prowess", scoundrelDetails.prowessXp),
+                    Pair("Resolve", scoundrelDetails.resolveXp),
+                    //    Pair("Playbook", scoundrelDetails.playbookXp)
+                ),
+                onRankClicked = { aString: String, aIndex: Int ->
+                    circleClicker(aString, aIndex)
+                },
+                xpTotal = 6
+            )
+            XpBlock(
+                xpTracks = listOf(Pair("Playbook", scoundrelDetails.playbookXp)),
+                onRankClicked = { aString: String, aIndex: Int ->
+                    circleClicker(aString, aIndex)
+                },
+                xpTotal = 8,
+            )
+        }//end coin and xp block
+
+        var showAbilitiesBlock by remember { mutableStateOf(false) }
+        MyButton(
+            onClick = { showAbilitiesBlock = !showAbilitiesBlock },
+            text = "Special Abilities",
+            trailingIcon = if (showAbilitiesBlock) {
+                Icons.Default.KeyboardArrowUp
+            } else {
+                Icons.Default.KeyboardArrowDown
             }
         )
 
-        XpBlock(
-            xpTracks = listOf(
-                Pair("Insight", scoundrelDetails.insightXp),
-                Pair("Prowess", scoundrelDetails.prowessXp),
-                Pair("Resolve", scoundrelDetails.resolveXp),
-                //    Pair("Playbook", scoundrelDetails.playbookXp)
-            ),
-            onRankClicked = { aString: String, aIndex: Int ->
-                circleClicker(aString, aIndex)
-            },
-            xpTotal = 6
-        )
-        XpBlock(
-            xpTracks = listOf(Pair("Playbook", scoundrelDetails.playbookXp)),
-            onRankClicked = { aString: String, aIndex: Int ->
-                circleClicker(aString, aIndex)
-            },
-            xpTotal = 8,
-        )
+        if (showAbilitiesBlock) {
+            SpecialAbilityBlock(
+                onValueChange = onValueChange,
+                scoundrelDetails = scoundrelDetails,
+                everyAbilityList = everyAbilityList,
+            )
+        }
 
-        SpecialAbilityBlock(
-            onValueChange = onValueChange,
-            scoundrelDetails = scoundrelDetails,
-            everyAbilityList = everyAbilityList,
+        var showContactsBlock by remember { mutableStateOf(false) }
+        MyButton(
+            onClick = { showContactsBlock = !showContactsBlock },
+            text = "Contacts",
+            trailingIcon = if (showContactsBlock) {
+                Icons.Default.KeyboardArrowUp
+            } else {
+                Icons.Default.KeyboardArrowDown
+            }
         )
 
-        Spacer(modifier = Modifier.height(5.dp))
-
-        ContactsBlock(
-            onValueChange = onValueChange,
-            scoundrelDetails = scoundrelDetails,
-            everyContactList = everyContactList,
-        )
-
+        if (showContactsBlock) {
+            ContactsBlock(
+                onValueChange = onValueChange,
+                scoundrelDetails = scoundrelDetails,
+                everyContactList = everyContactList,
+            )
+        }
     }//end Column
+
 }//end ScoundrelInputForm
 
 @Composable
@@ -494,7 +545,7 @@ fun SpecialAbilityBlock(
 
     val abilitiesList = scoundrelDetails.specialAbilities
 
-    TitleBlock(title = "", text = "Special Abilities")
+   // TitleBlock(title = "", text = "Special Abilities")
     abilitiesList.forEach { it ->
         AbilityItem(
             ability = it,
@@ -583,7 +634,7 @@ fun ContactsBlock(
         newContact = newContact.copy(contactDescription = description)
     }
 
-    fun onRatingChange(rating:Int){
+    fun onRatingChange(rating: Int) {
         newContact = newContact.copy(rating = rating)
     }
 
@@ -632,9 +683,9 @@ fun ContactsBlock(
 
     val contactList = scoundrelDetails.contacts
 
-    TitleBlock(title = "", text = "Contacts")
+   // TitleBlock(title = "", text = "Contacts")
     contactList.forEach { it ->
-        fun editRatingClick(rating:Int){
+        fun editRatingClick(rating: Int) {
             it.rating = rating
             showRemoveContactDialog = true
             showRemoveContactDialog = false //hack to force recompose
@@ -642,7 +693,7 @@ fun ContactsBlock(
         ContactWithRatingItem(
             contact = it,
             displayDeleteContactDialog = { contactDeleteDialogClick(it) },
-            onRatingClick = {editRatingClick(it)},
+            onRatingClick = { editRatingClick(it) },
             onClick = {}
         )
     }
@@ -689,7 +740,7 @@ fun ContactsBlock(
             onAccept = { doNewContactFromResult(it) },
             onNameChange = { onContactChange(it) },
             onDescriptionChange = { onDescriptionChange(it) },
-            onRatingChange = {onRatingChange(it)},
+            onRatingChange = { onRatingChange(it) },
             title = "New Contact",
             nameLabel = "Contact name",
             nameHint = "Name this Contact",

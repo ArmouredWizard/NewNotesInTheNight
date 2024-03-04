@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -256,9 +257,16 @@ fun CrewDetails(crew: Crew, modifier: Modifier, scoundrelList: List<Scoundrel>) 
         MyButton(
             onClick = { scoundrelExpanded = !scoundrelExpanded },
             text = "Scoundrels",
-            trailingIcon = Icons.Default.KeyboardArrowDown
+           trailingIcon = if (scoundrelExpanded) {
+                Icons.Default.KeyboardArrowUp
+            } else {
+                Icons.Default.KeyboardArrowDown
+            }
         )
         if (scoundrelExpanded) {
+            if (scoundrelList.isEmpty()){
+                Text(text = "No Scoundrels")
+            }
             scoundrelList.forEach { scoundrel ->
                 ScoundrelItem(
                     scoundrel = scoundrel,
@@ -293,9 +301,16 @@ fun CrewDetails(crew: Crew, modifier: Modifier, scoundrelList: List<Scoundrel>) 
         MyButton(
             onClick = { abilityExpanded = !abilityExpanded },
             text = "Crew Abilities",
-            trailingIcon = Icons.Default.KeyboardArrowDown
+            trailingIcon = if (abilityExpanded) {
+                Icons.Default.KeyboardArrowUp
+            } else {
+                Icons.Default.KeyboardArrowDown
+            }
         )
         if (abilityExpanded) {
+            if (crew.crewAbilities.isEmpty()){
+                Text(text = "No Crew Abilities")
+            }
             crew.crewAbilities.forEach { ability ->
                 CrewAbilityItem(
                     ability = ability,
@@ -328,9 +343,16 @@ fun CrewDetails(crew: Crew, modifier: Modifier, scoundrelList: List<Scoundrel>) 
         MyButton(
             onClick = { contactsExpanded = !contactsExpanded },
             text = "Contacts",
-            trailingIcon = Icons.Default.KeyboardArrowDown
+            trailingIcon = if (contactsExpanded) {
+                Icons.Default.KeyboardArrowUp
+            } else {
+                Icons.Default.KeyboardArrowDown
+            }
         )
         if (contactsExpanded) {
+            if (crew.contacts.isEmpty()){
+                Text(text = "No Contacts")
+            }
             crew.contacts.forEach { contact ->
                 ContactWithRatingItem(
                     contact = contact,
@@ -366,9 +388,16 @@ fun CrewDetails(crew: Crew, modifier: Modifier, scoundrelList: List<Scoundrel>) 
         MyButton(
             onClick = { upgradesExpanded = !upgradesExpanded },
             text = "Upgrades",
-            trailingIcon = Icons.Default.KeyboardArrowDown
+            trailingIcon = if (upgradesExpanded) {
+                Icons.Default.KeyboardArrowUp
+            } else {
+                Icons.Default.KeyboardArrowDown
+            }
         )
         if (upgradesExpanded) {
+            if (crew.upgrades.isEmpty()){
+                Text(text = "No Upgrades")
+            }
             crew.upgrades.forEach { upgrade ->
                 CrewUpgradeItem(
                     upgrade = upgrade,
@@ -379,6 +408,7 @@ fun CrewDetails(crew: Crew, modifier: Modifier, scoundrelList: List<Scoundrel>) 
                     displayDeleteUpgradeDialog = {} //displayDeleteDialog
                 )
             }//end LazyColumn
-        }//end contacts expanded
+        }//end upgrades expanded
+
     }
 }
