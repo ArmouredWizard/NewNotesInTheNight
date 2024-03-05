@@ -162,6 +162,9 @@ interface NightDao {
     @Query("SELECT * from notes where noteId = :noteId")
     fun getNoteById(noteId: Int): Flow<NoteEntity>
 
+    @Query("SELECT * from notes where noteId = :noteId")
+    fun getFullNoteById(noteId: Int):Flow<FullNoteEntity>
+
     @Query("SELECT * from tags")
     fun getNotesTags(): Flow<List<TagEntity>>
 

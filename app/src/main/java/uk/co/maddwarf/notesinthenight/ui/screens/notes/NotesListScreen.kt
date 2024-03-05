@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -44,7 +45,6 @@ import uk.co.maddwarf.notesinthenight.model.Scoundrel
 import uk.co.maddwarf.notesinthenight.model.Tag
 import uk.co.maddwarf.notesinthenight.navigation.NavigationDestination
 import uk.co.maddwarf.notesinthenight.ui.composables.DeleteConfirmationDialog
-import uk.co.maddwarf.notesinthenight.ui.composables.InfoPopUp
 import uk.co.maddwarf.notesinthenight.ui.composables.MySpinner
 import uk.co.maddwarf.notesinthenight.ui.composables.note.NoteItem
 import uk.co.maddwarf.notesinthenight.ui.composables.note.NoteEntryDialog
@@ -59,6 +59,8 @@ object NotesListDestination : NavigationDestination {
 @Composable
 fun NotesListScreen(
     navigateToHome: () -> Unit,
+    navigateToAddNoteScreen: () -> Unit,
+    navigateToNoteEdit: (Int) -> Unit,
     onNavigateUp: () -> Unit,
     notesListViewModel: NotesListViewModel = hiltViewModel()
 ) {
@@ -75,30 +77,33 @@ fun NotesListScreen(
     var newNote by remember { mutableStateOf(Note()) }
     var showAddNoteDialog by remember { mutableStateOf(false) }
     fun addNoteClick() {
-        showAddNoteDialog = !showAddNoteDialog
+        //  showAddNoteDialog = !showAddNoteDialog
+        navigateToAddNoteScreen()
     }
 
-    fun onNoteTitleChange(noteName: String) {
+   /* fun onNoteTitleChange(noteName: String) {
         newNote = newNote.copy(title = noteName)
-    }
+    }*/
 
-    fun onNoteBodyChange(noteBody: String) {
+  /*  fun onNoteBodyChange(noteBody: String) {
         newNote = newNote.copy(body = noteBody)
-    }
+    }*/
 
     var newTag by remember { mutableStateOf("") }
 
-    fun onNoteCategoryChange(noteCategory: String) {
+   /* fun onNoteCategoryChange(noteCategory: String) {
         newTag = noteCategory
-    }
+    }*/
 
-    fun showEditNote(note: Note) {
+    fun editNoteClick(note: Note) {
         newNote = note
         newTag = ""
-        displayEditNoteDialog = !displayEditNoteDialog
+        navigateToNoteEdit(note.noteId)
+
+        //displayEditNoteDialog = !displayEditNoteDialog
     }
 
-    fun doNewNote(note: Note) {
+   /* fun doNewNote(note: Note) {
         Log.d("NEW NOTE", note.toString())
         showAddNoteDialog = false
         coroutineScope.launch {
@@ -106,35 +111,33 @@ fun NotesListScreen(
         }
         newNote = Note()
         newTag = ""
-    }
+    }*/
 
-    fun doEditNote(note: Note) {
+   /* fun doEditNote(note: Note) {
         Log.d("EDIT NOTE", note.toString())
         displayEditNoteDialog = false
         coroutineScope.launch {
             notesListViewModel.saveEditedNote(note)
         }
         newNote = Note()
-    }
+    }*/
 
-    fun onTagAdd(tag: Tag) {
+   /* fun onTagAdd(tag: Tag) {
         newNote = newNote.copy(tags = (newNote.tags + tag).toMutableList())
         newTag = ""
-    }
+    }*/
 
-    fun onScoundrelAdd(scoundrel: Scoundrel) {
+   /* fun onScoundrelAdd(scoundrel: Scoundrel) {
         newNote = newNote.copy(scoundrels = (newNote.scoundrels + scoundrel).toMutableList())
-    }
+    }*/
 
-    fun onCrewAdd(crew: Crew) {
-        Log.d("CREW ON ADD", newNote.toString())
-        newNote = newNote.copy(crews = (newNote.crews + crew).toMutableList())
-        Log.d("CREW After ADD", newNote.toString())
+    /* fun onCrewAdd(crew: Crew) {
+         Log.d("CREW ON ADD", newNote.toString())
+         newNote = newNote.copy(crews = (newNote.crews + crew).toMutableList())
+         Log.d("CREW After ADD", newNote.toString())
+     }*/
 
-    }
-
-    if (displayEditNoteDialog) {
-        Log.d("EVERY SCOUNDREL IN EDIT", everyScoundrelList.toString())
+  /*  if (displayEditNoteDialog) {
         NoteEntryDialog(
             noteId = newNote.noteId,
             title = newNote.title,
@@ -160,35 +163,35 @@ fun NotesListScreen(
             everyCrewList = everyCrewList,
             onCrewAdd = { onCrewAdd(it) }
         )
-    }
+    }*/
 
-    if (showAddNoteDialog) {
-        NoteEntryDialog(
-            noteId = 0,
-            title = newNote.title,
-            body = newNote.body,
-            tags = newNote.tags,
-            newTag = newTag,
+    /*  if (showAddNoteDialog) {
+          NoteEntryDialog(
+              noteId = 0,
+              title = newNote.title,
+              body = newNote.body,
+              tags = newNote.tags,
+              newTag = newTag,
 
-            scoundrels = newNote.scoundrels,
-            crews = newNote.crews,
+              scoundrels = newNote.scoundrels,
+              crews = newNote.crews,
 
-            onDismiss = {
-                showAddNoteDialog = false
-                newNote = Note()
-            },
-            onAccept = { doNewNote(it) },
-            onTitleChange = { onNoteTitleChange(it) },
-            onBodyChange = { onNoteBodyChange(it) },
-            onCategoryChange = { onNoteCategoryChange(it) },
-            tagsList = tagsList,
-            onTagAdd = { onTagAdd(it) },
-            everyScoundrelList = everyScoundrelList,
-            onScoundrelAdd = { onScoundrelAdd(it) },
-            everyCrewList = everyCrewList,
-            onCrewAdd = { onCrewAdd(it) }
-        )
-    }
+              onDismiss = {
+                  showAddNoteDialog = false
+                  newNote = Note()
+              },
+              onAccept = { doNewNote(it) },
+              onTitleChange = { onNoteTitleChange(it) },
+              onBodyChange = { onNoteBodyChange(it) },
+              onCategoryChange = { onNoteCategoryChange(it) },
+              tagsList = tagsList,
+              onTagAdd = { onTagAdd(it) },
+              everyScoundrelList = everyScoundrelList,
+              onScoundrelAdd = { onScoundrelAdd(it) },
+              everyCrewList = everyCrewList,
+              onCrewAdd = { onCrewAdd(it) }
+          )
+      }*/
 
     Scaffold(
         modifier = Modifier,
@@ -216,6 +219,8 @@ fun NotesListScreen(
         NotesListBody(
             notesList = uiState.list,
             tagsList = tagsList,
+            everyScoundrelList = everyScoundrelList,
+            everyCrewList = everyCrewList,
             onItemClick = {},
             modifier = Modifier
                 .padding(innerPadding)
@@ -223,7 +228,7 @@ fun NotesListScreen(
             deleteNote = {
                 notesListViewModel.deleteNote(it)
             },
-            showEditNote = { showEditNote(it) }
+            showEditNote = { editNoteClick(it) }
         )
     }//end Scaffold
 }//end General Note List Screen
@@ -235,6 +240,8 @@ fun NotesListBody(
     modifier: Modifier,
     deleteNote: (Note) -> Unit,
     tagsList: List<Tag>,
+    everyScoundrelList: List<Scoundrel>,
+    everyCrewList: List<Crew>,
     showEditNote: (Note) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -292,9 +299,9 @@ fun NotesListBody(
         )
     }
 
-    val unfilteredTitle = stringResource(R.string.all_note_categories)
-    var chosenCategory by remember { mutableStateOf(unfilteredTitle) }
-    val categoryList: MutableList<Tag> = mutableListOf(Tag(tag = unfilteredTitle))
+    val unfilteredTagTitle = stringResource(R.string.all_note_tags)
+    var chosenCategory by remember { mutableStateOf(unfilteredTagTitle) }
+    val categoryList: MutableList<Tag> = mutableListOf(Tag(tag = unfilteredTagTitle))
     categoryList.addAll(tagsList)
 
     var categoryFilterExpanded by remember { mutableStateOf(false) }
@@ -304,56 +311,149 @@ fun NotesListBody(
         chosenCategory = category
     }
 
+    val unfilteredScoundrelTitle = stringResource(R.string.all_note_scoundrels)
+    var chosenScoundrel by remember { mutableStateOf(unfilteredScoundrelTitle) }
+    val scoundrelList: MutableList<Scoundrel> =
+        mutableListOf(Scoundrel(name = unfilteredScoundrelTitle))
+    scoundrelList.addAll(everyScoundrelList)
+
+    var scoundrelFilterExpanded by remember { mutableStateOf(false) }
+
+    fun noteScoundrelChooser(scoundrel: String) {
+        scoundrelFilterExpanded = false
+        chosenScoundrel = scoundrel
+    }
+
+    val unfilteredCrewTitle = stringResource(R.string.all_note_crews)
+    var chosenCrew by remember { mutableStateOf(unfilteredCrewTitle) }
+    val crewList: MutableList<Crew> =
+        mutableListOf(Crew(crewName = unfilteredCrewTitle))
+    crewList.addAll(everyCrewList)
+
+    var crewFilterExpanded by remember { mutableStateOf(false) }
+
+    fun noteCrewChooser(crew: String) {
+        crewFilterExpanded = false
+        chosenCrew = crew
+    }
+
+    var tagFilteredNoteList: MutableList<Note> = mutableListOf()
+    var scoundrelFilteredNoteList: MutableList<Note> = mutableListOf()
+    var crewFilteredNoteList: MutableList<Note> = mutableListOf()
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(color = Color.LightGray)
-            .paint(painterResource(id = R.drawable.cobbles), contentScale = ContentScale.FillBounds)
+            .paint(
+                painterResource(id = R.drawable.cobbles),
+                contentScale = ContentScale.FillBounds
+            ),
+        contentAlignment = Alignment.TopCenter
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp)
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                MySpinner(
-                    expanded = categoryFilterExpanded,
-                    onClick = { categoryFilterExpanded = !categoryFilterExpanded },
-                    list = categoryList.map {
-                        it.tag
-                    }.distinct(),
-                    chooser = ::noteCategoryChooser,
-                    report = chosenCategory
-                )
-            }
+                Row(modifier = Modifier.fillMaxWidth(.3f)) {
+                    MySpinner(
+                        expanded = categoryFilterExpanded,
+                        onClick = { categoryFilterExpanded = !categoryFilterExpanded },
+                        list = categoryList.map {
+                            it.tag
+                        }.distinct(),
+                        chooser = ::noteCategoryChooser,
+                        report = chosenCategory
+                    )
 
-            var filteredNoteList: MutableList<Note> = mutableListOf()
-            if (chosenCategory == unfilteredTitle) {
-                filteredNoteList = notesList.toMutableList()
-            } else {
-                notesList.forEach { note ->
-                    note.tags.forEach { tag ->
-                        if (tag.tag == chosenCategory) {
-                            filteredNoteList.add(note)
+                    if (chosenCategory == unfilteredTagTitle) {
+                        tagFilteredNoteList = notesList.toMutableList()
+                    } else {
+                        notesList.forEach { note ->
+                            note.tags.forEach { tag ->
+                                if (tag.tag == chosenCategory) {
+                                    tagFilteredNoteList.add(note)
+                                }
+                            }
                         }
+                        tagFilteredNoteList.distinct()
                     }
-                }
-                filteredNoteList.distinct()
-            }
+                }//end Tag Filter Row
 
-            if (notesList.isEmpty()) {
+                Row(modifier = Modifier.fillMaxWidth(.5f)) {
+                    MySpinner(
+                        expanded = scoundrelFilterExpanded,
+                        onClick = { scoundrelFilterExpanded = !scoundrelFilterExpanded },
+                        list = scoundrelList.map {
+                            it.name
+                        }.distinct(),
+                        chooser = ::noteScoundrelChooser,
+                        report = chosenScoundrel
+                    )
+
+                    // var filteredNoteList: MutableList<Note> = mutableListOf()
+                    if (chosenScoundrel == unfilteredScoundrelTitle) {
+                        scoundrelFilteredNoteList = tagFilteredNoteList.toMutableList()
+                    } else {
+                        Log.d("SCOUNDREL", chosenScoundrel)
+                        tagFilteredNoteList.forEach { note ->
+                            note.scoundrels.forEach { scoundrel ->
+                                if (scoundrel.name == chosenScoundrel) {
+                                    scoundrelFilteredNoteList.add(note)
+                                }
+                            }
+                        }
+                        tagFilteredNoteList.distinct()
+                    }
+                }//end Scoundrel Filter Row
+
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    MySpinner(
+                        expanded = crewFilterExpanded,
+                        onClick = { crewFilterExpanded = !crewFilterExpanded },
+                        list = crewList.map {
+                            it.crewName
+                        }.distinct(),
+                        chooser = ::noteCrewChooser,
+                        report = chosenCrew
+                    )
+
+                    // var filteredNoteList: MutableList<Note> = mutableListOf()
+                    if (chosenCrew == unfilteredCrewTitle) {
+                        crewFilteredNoteList = scoundrelFilteredNoteList.toMutableList()
+                    } else {
+                        scoundrelFilteredNoteList.forEach { note ->
+                            Log.d("CHECKING NOTE", note.title)
+                            note.crews.forEach { crew ->
+                                if (crew.crewName == chosenCrew) {
+                                    crewFilteredNoteList.add(note)
+                                }
+                            }
+                        }
+                        crewFilteredNoteList.distinct()
+                    }
+                }//end Crew Filter Row
+
+            }//end Filter Row
+
+            if (crewFilteredNoteList.isEmpty()) {
                 Text(text = "No Notes")
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
                 ) {
-                    items(items = filteredNoteList) { item ->
+                    items(items = crewFilteredNoteList) { item ->
                         NoteItem(
                             note = item,
                             modifier = Modifier
@@ -363,8 +463,10 @@ fun NotesListBody(
                             onClick = { doNotePopUp(item) }
                         )
                     }
+
                 }//end LazyColumn
             }//end IF List
+
         }//end column
     }//end Box
 

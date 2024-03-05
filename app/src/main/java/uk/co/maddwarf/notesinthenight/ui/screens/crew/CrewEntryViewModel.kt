@@ -23,7 +23,7 @@ class CrewEntryViewModel @Inject constructor(private val scoundrelUseCase: Scoun
                 //confirm details/changes/trims etc
             )
         )
-    }//todo
+    }
 
     fun updateUiState(crewDetails: Crew) {
         crewEntryUiState =

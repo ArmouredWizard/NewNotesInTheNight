@@ -112,6 +112,9 @@ class ScoundrelUseCase @Inject constructor(private val nightRepository: NightRep
     fun getNoteById(noteId: Int): Flow<Note> =
         nightRepository.getNoteById(noteId)
 
+    fun getFullNoteById(noteId:Int):Flow<Note> =
+        nightRepository.getFullNoteById(noteId)
+
     fun getNotesTags():Flow<List<Tag>> =
         nightRepository.getNotesTags()
 

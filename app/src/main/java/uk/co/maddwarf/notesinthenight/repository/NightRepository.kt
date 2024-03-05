@@ -79,6 +79,7 @@ interface NightRepository {
     suspend fun saveEditedNote(note: Note)
     fun getContactWithRatingByScoundrelId(scoundrelId: Int): Flow<List<ContactWithRating>>
     fun getContactWithRatingByCrewId(crewId: Int): Flow<List<ContactWithRating>>
+    fun getFullNoteById(noteId: Int): Flow<Note>
 }
 
 class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : NightRepository {
@@ -378,9 +379,10 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
         nightDao.insertNote(note.toNoteEntity())
     }
 
-    override suspend fun deleteNote(note: Note) =
+    override suspend fun deleteNote(note: Note) {
+        nightDao.deleteNoteTagCrossRefByNoteId(note.noteId)
         nightDao.deleteNote(note.toNoteEntity())
-
+    }
     override fun getAllNotes(): Flow<List<Note>> =
         nightDao.getAllNotes().map {
             it.map { note ->
@@ -404,6 +406,11 @@ class NightRepositoryImpl @Inject constructor(private val nightDao: NightDao) : 
 
     override fun getNoteById(noteId: Int): Flow<Note> =
         nightDao.getNoteById(noteId).map {
+            it.toNote()
+        }
+
+    override fun getFullNoteById(noteId:Int):Flow<Note> =
+        nightDao.getFullNoteById(noteId).map{
             it.toNote()
         }
 

@@ -21,6 +21,10 @@ import uk.co.maddwarf.notesinthenight.ui.screens.crew.CrewEntryDestination
 import uk.co.maddwarf.notesinthenight.ui.screens.crew.CrewEntryScreen
 import uk.co.maddwarf.notesinthenight.ui.screens.crew.CrewListDestination
 import uk.co.maddwarf.notesinthenight.ui.screens.crew.CrewListScreen
+import uk.co.maddwarf.notesinthenight.ui.screens.notes.NoteEditDestination
+import uk.co.maddwarf.notesinthenight.ui.screens.notes.NoteEditScreen
+import uk.co.maddwarf.notesinthenight.ui.screens.notes.NoteEntryDestination
+import uk.co.maddwarf.notesinthenight.ui.screens.notes.NoteEntryScreen
 import uk.co.maddwarf.notesinthenight.ui.screens.notes.NotesListDestination
 import uk.co.maddwarf.notesinthenight.ui.screens.notes.NotesListScreen
 import uk.co.maddwarf.notesinthenight.ui.screens.scoundrel.ScoundrelDetailsDestination
@@ -47,6 +51,7 @@ fun NotesInTheNightNavHost(navController: NavHostController) {
         fun navigateToCrewEntry() = navController.navigate(CrewEntryDestination.route)
         fun navigateToContactList() = navController.navigate(ContactListDestination.route)
         fun navigateToGeneralNotesList() = navController.navigate(NotesListDestination.route)
+        fun navigateToAddNoteScreen() = navController.navigate(NoteEntryDestination.route)
 
         composable(route = HomeDestination.route) {
             HomeScreen(
@@ -173,6 +178,31 @@ fun NotesInTheNightNavHost(navController: NavHostController) {
 
         composable(route = NotesListDestination.route) {
             NotesListScreen(
+                navigateToHome = { navigateToHome() },
+                navigateToAddNoteScreen = { navigateToAddNoteScreen() },
+                onNavigateUp = { navController.navigateUp() },
+                navigateToNoteEdit = {  navController.navigate("${NoteEditDestination.route}/${it}")  }
+            )
+        }
+
+        composable(route = NoteEntryDestination.route){
+            NoteEntryScreen(
+                navigateBack = { navController.popBackStack() },
+                navigateToHome = { navigateToHome() },
+                onNavigateUp = { navController.navigateUp() },
+                canNavigateBack = true
+            )
+        }
+
+        composable(route = NoteEditDestination.routeWithArgs,
+            arguments = listOf(
+                navArgument(NoteEditDestination.itemIdArg) {
+                    type = NavType.IntType
+                }
+            )
+            ){
+            NoteEditScreen(
+                navigateBack = { navController.popBackStack() },
                 navigateToHome = { navigateToHome() },
                 onNavigateUp = { navController.navigateUp() }
             )
