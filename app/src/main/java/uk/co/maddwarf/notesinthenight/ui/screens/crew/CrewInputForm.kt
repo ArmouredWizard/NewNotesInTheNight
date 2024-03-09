@@ -1,6 +1,7 @@
 package uk.co.maddwarf.notesinthenight.ui.screens.crew
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -26,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import uk.co.maddwarf.notesinthenight.R
@@ -133,52 +137,97 @@ fun CrewInputForm(
             onDotClicked = { onValueChange(crewDetails.copy(heat = it)) },
             infoText = stringResource(R.string.heat_info) //todo expand
         )
-        TraitDots(
-            traitName = "Tier",
-            traitValue = crewDetails.tier,
-            maxValue = 4,
-            onDotClicked = { onValueChange(crewDetails.copy(tier = it)) },
-            infoText = stringResource(R.string.tier_info) //todo rewrite
-        )
 
-        var switchOn by remember {
-            mutableStateOf(false)
-        }
-//Hold Switch
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
-            Switch(
-                checked = switchOn,
-                onCheckedChange = { switchOn_ ->
-                    switchOn = switchOn_
-                    onValueChange(crewDetails.copy(holdIsStrong = (switchOn)))
-                    Log.d("SWITCHING", "switchOn $switchOn, Strong: $strong")
-                }
+            Row (modifier = Modifier.weight(1f)) {
+                TraitDots(
+                    traitName = "Tier",
+                    traitValue = crewDetails.tier,
+                    maxValue = 4,
+                    onDotClicked = { onValueChange(crewDetails.copy(tier = it)) },
+                    // infoText = stringResource(R.string.tier_info) //todo rewrite
+                    infoText = ""
+                )
+            }
+            var switchOn by remember {
+                mutableStateOf(false)
+            }
+//Hold Switch
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .weight(1f),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Switch(
+                    checked = switchOn,
+                    onCheckedChange = { switchOn_ ->
+                        switchOn = switchOn_
+                        onValueChange(crewDetails.copy(holdIsStrong = (switchOn)))
+                        Log.d("SWITCHING", "switchOn $switchOn, Strong: $strong")
+                    }
+                )
+                Text(text = if (switchOn) "Strong" else "Weak")
+            }
+            //end Hold Switch
+        }//end Tier Row
+
+        var showAbilitiesBlock by remember { mutableStateOf(false) }
+        MyButton(
+            onClick = { showAbilitiesBlock = !showAbilitiesBlock },
+            text = "Crew Special Abilities",
+            trailingIcon = if (showAbilitiesBlock) {
+                Icons.Default.KeyboardArrowUp
+            } else {
+                Icons.Default.KeyboardArrowDown
+            }
+        )
+        if (showAbilitiesBlock) {
+            CrewAbilityBlock(
+                onValueChange = onValueChange,
+                crewDetails = crewDetails,
+                everyAbilityList = everyAbilityList,
             )
-            Text(text = if (switchOn) "Strong" else "Weak")
         }
-        //end Hold Switch
 
-        CrewAbilityBlock(
-            onValueChange = onValueChange,
-            crewDetails = crewDetails,
-            everyAbilityList = everyAbilityList,
+        var showContactsBlock by remember { mutableStateOf(false) }
+        MyButton(
+            onClick = { showContactsBlock = !showContactsBlock },
+            text = "Contacts",
+            trailingIcon = if (showContactsBlock) {
+                Icons.Default.KeyboardArrowUp
+            } else {
+                Icons.Default.KeyboardArrowDown
+            }
         )
+        if (showContactsBlock) {
+            CrewContactsBlock(
+                onValueChange = onValueChange,
+                crewDetails = crewDetails,
+                everyContactList = everyContactList,
+            )
+        }
 
-        CrewContactsBlock(
-            onValueChange = onValueChange,
-            crewDetails = crewDetails,
-            everyContactList = everyContactList,
+        var showUpgradesBlock by remember { mutableStateOf(false) }
+        MyButton(
+            onClick = { showUpgradesBlock = !showUpgradesBlock },
+            text = "Crew Upgrades",
+            trailingIcon = if (showUpgradesBlock) {
+                Icons.Default.KeyboardArrowUp
+            } else {
+                Icons.Default.KeyboardArrowDown
+            }
         )
-
-        CrewUpgradesBlock(
-            onValueChange = onValueChange,
-            crewDetails = crewDetails,
-            everyUpgradeList = everyUpgradeList,
-        )
+        if (showUpgradesBlock) {
+            CrewUpgradesBlock(
+                onValueChange = onValueChange,
+                crewDetails = crewDetails,
+                everyUpgradeList = everyUpgradeList,
+            )
+        }
 
     }//end column
 }//end CrewEntryForm
@@ -256,7 +305,7 @@ fun CrewAbilityBlock(
 
     val abilitiesList = crewDetails.crewAbilities
 
-    TitleBlock(title = "", text = "Crew Special Abilities")
+   // TitleBlock(title = "", text = "Crew Special Abilities")
     abilitiesList.forEach { it ->
         CrewAbilityItem(
             ability = it,
@@ -389,7 +438,7 @@ fun CrewUpgradesBlock(
 
     val upgradesList = crewDetails.upgrades
 
-    TitleBlock(title = "", text = "Crew Upgrades")
+   // TitleBlock(title = "", text = "Crew Upgrades")
     upgradesList.forEach { it ->
         CrewUpgradeItem(
             upgrade = it,
@@ -525,7 +574,7 @@ fun CrewContactsBlock(
 
     val contactList = crewDetails.contacts
 
-    TitleBlock(title = "", text = "Contacts")
+ //   TitleBlock(title = "", text = "Contacts")
     contactList.forEach { it ->
         fun editRatingClick(rating: Int) {
             it.rating = rating
@@ -591,7 +640,7 @@ fun CrewContactsBlock(
         )
     }
 
-}//end Abilities Block
+}//end Contacts Block
 
 @Composable
 fun CrewAbilityItem(
@@ -607,6 +656,7 @@ fun CrewAbilityItem(
     ) {
         Column(
             modifier = Modifier
+                .background(Color.LightGray)
                 .padding(10.dp)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -650,6 +700,7 @@ fun CrewUpgradeItem(
     ) {
         Column(
             modifier = Modifier
+                .background(Color.LightGray)
                 .padding(10.dp)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -677,4 +728,4 @@ fun CrewUpgradeItem(
             }
         }
     }
-}//end AbilityItem
+}//end upgrade Item

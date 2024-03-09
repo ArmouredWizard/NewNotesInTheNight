@@ -24,7 +24,7 @@ fun MyButton(
     Button(
         modifier = modifier.fillMaxWidth(),
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+       // colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         border = BorderStroke(width = 1.dp, color = Color.Black),
 
         ) {

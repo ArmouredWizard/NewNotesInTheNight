@@ -55,15 +55,23 @@ fun TraitDots(
                 TraitDot(index = dot, rank = traitValue, onDotClicked = onDotClicked)
             }
         }
-        Icon(
-            imageVector = Icons.Default.Info,
-            contentDescription = "Info",
+        Row(
             modifier = Modifier
-                .padding(5.dp)
-                .clickable(
-                    onClick = { showDialog.value = true }
+                .wrapContentWidth()
+        ) {
+            if (infoText != "") {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = "Info",
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .clickable(
+                            onClick = { showDialog.value = true }
+                        )
                 )
-        )
+            }
+        }
+
         if (showDialog.value) {
             InfoDialog(
                 open = showDialog.value,

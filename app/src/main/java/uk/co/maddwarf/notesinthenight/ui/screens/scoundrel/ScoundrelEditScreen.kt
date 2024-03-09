@@ -144,10 +144,11 @@ fun ScoundrelEditBody(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.LightGray)
+            .paint(painterResource(id = R.drawable.cobbles), contentScale = ContentScale.FillBounds)
     ) {
         Column(
-            modifier = modifier.padding(10.dp),
+            modifier = modifier.padding(10.dp)
+            ,
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             ScoundrelInputForm(

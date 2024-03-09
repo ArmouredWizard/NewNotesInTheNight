@@ -72,126 +72,18 @@ fun NotesListScreen(
     val everyScoundrelList by notesListViewModel.getAllScoundrels.collectAsState(listOf())
     val everyCrewList by notesListViewModel.getAllCrews.collectAsState(listOf())
 
-    var displayEditNoteDialog by remember { mutableStateOf(false) }
-
     var newNote by remember { mutableStateOf(Note()) }
-    var showAddNoteDialog by remember { mutableStateOf(false) }
     fun addNoteClick() {
-        //  showAddNoteDialog = !showAddNoteDialog
         navigateToAddNoteScreen()
     }
 
-   /* fun onNoteTitleChange(noteName: String) {
-        newNote = newNote.copy(title = noteName)
-    }*/
-
-  /*  fun onNoteBodyChange(noteBody: String) {
-        newNote = newNote.copy(body = noteBody)
-    }*/
-
     var newTag by remember { mutableStateOf("") }
-
-   /* fun onNoteCategoryChange(noteCategory: String) {
-        newTag = noteCategory
-    }*/
 
     fun editNoteClick(note: Note) {
         newNote = note
         newTag = ""
         navigateToNoteEdit(note.noteId)
-
-        //displayEditNoteDialog = !displayEditNoteDialog
     }
-
-   /* fun doNewNote(note: Note) {
-        Log.d("NEW NOTE", note.toString())
-        showAddNoteDialog = false
-        coroutineScope.launch {
-            notesListViewModel.saveNote(note)
-        }
-        newNote = Note()
-        newTag = ""
-    }*/
-
-   /* fun doEditNote(note: Note) {
-        Log.d("EDIT NOTE", note.toString())
-        displayEditNoteDialog = false
-        coroutineScope.launch {
-            notesListViewModel.saveEditedNote(note)
-        }
-        newNote = Note()
-    }*/
-
-   /* fun onTagAdd(tag: Tag) {
-        newNote = newNote.copy(tags = (newNote.tags + tag).toMutableList())
-        newTag = ""
-    }*/
-
-   /* fun onScoundrelAdd(scoundrel: Scoundrel) {
-        newNote = newNote.copy(scoundrels = (newNote.scoundrels + scoundrel).toMutableList())
-    }*/
-
-    /* fun onCrewAdd(crew: Crew) {
-         Log.d("CREW ON ADD", newNote.toString())
-         newNote = newNote.copy(crews = (newNote.crews + crew).toMutableList())
-         Log.d("CREW After ADD", newNote.toString())
-     }*/
-
-  /*  if (displayEditNoteDialog) {
-        NoteEntryDialog(
-            noteId = newNote.noteId,
-            title = newNote.title,
-            body = newNote.body,
-            tags = newNote.tags,
-            newTag = newTag,
-
-            scoundrels = newNote.scoundrels,
-            crews = newNote.crews,
-
-            onDismiss = {
-                displayEditNoteDialog = false
-                newNote = Note()
-            },
-            onAccept = { doEditNote(it) },
-            onTitleChange = { onNoteTitleChange(it) },
-            onBodyChange = { onNoteBodyChange(it) },
-            onCategoryChange = { onNoteCategoryChange(it) },
-            tagsList = tagsList,
-            onTagAdd = { onTagAdd(it) },
-            everyScoundrelList = everyScoundrelList,
-            onScoundrelAdd = { onScoundrelAdd(it) },
-            everyCrewList = everyCrewList,
-            onCrewAdd = { onCrewAdd(it) }
-        )
-    }*/
-
-    /*  if (showAddNoteDialog) {
-          NoteEntryDialog(
-              noteId = 0,
-              title = newNote.title,
-              body = newNote.body,
-              tags = newNote.tags,
-              newTag = newTag,
-
-              scoundrels = newNote.scoundrels,
-              crews = newNote.crews,
-
-              onDismiss = {
-                  showAddNoteDialog = false
-                  newNote = Note()
-              },
-              onAccept = { doNewNote(it) },
-              onTitleChange = { onNoteTitleChange(it) },
-              onBodyChange = { onNoteBodyChange(it) },
-              onCategoryChange = { onNoteCategoryChange(it) },
-              tagsList = tagsList,
-              onTagAdd = { onTagAdd(it) },
-              everyScoundrelList = everyScoundrelList,
-              onScoundrelAdd = { onScoundrelAdd(it) },
-              everyCrewList = everyCrewList,
-              onCrewAdd = { onCrewAdd(it) }
-          )
-      }*/
 
     Scaffold(
         modifier = Modifier,

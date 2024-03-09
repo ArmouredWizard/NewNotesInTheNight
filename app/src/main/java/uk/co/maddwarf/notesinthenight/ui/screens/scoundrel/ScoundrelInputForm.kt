@@ -367,7 +367,7 @@ fun CrewBlock(
 
     val crew = scoundrelDetails.crew
 
-    TitleBlock(title = "", text = "Crew")
+  //  TitleBlock(title = "", text = "Crew")
     if (crew != null) {
         CrewItem(
             crew = crew,
@@ -440,6 +440,7 @@ fun CrewItem(
     ) {
         Column(
             modifier = Modifier
+                .background(color = Color.LightGray)
                 .padding(10.dp)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp)

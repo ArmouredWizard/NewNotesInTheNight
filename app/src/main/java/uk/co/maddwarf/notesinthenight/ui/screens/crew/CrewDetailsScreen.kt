@@ -213,25 +213,31 @@ fun CrewDetails(crew: Crew, modifier: Modifier, scoundrelList: List<Scoundrel>) 
         )
 
         Spacer(modifier = Modifier.height(10.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                TraitDots(
+                    traitName = "Tier",
+                    traitValue = crew.tier,
+                    maxValue = 4,
+                    onDotClicked = {},
+                    infoText = ""//stringResource(R.string.tier_info)
+                )
+            }
+            // Spacer(modifier = Modifier.height(5.dp))
 
-        TraitDots(
-            traitName = "Tier",
-            traitValue = crew.tier,
-            maxValue = 4,
-            onDotClicked = {},
-            infoText = stringResource(R.string.tier_info)
-        )
-
-        Spacer(modifier = Modifier.height(5.dp))
-
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
-            Text(
-                text = "Hold: $strong",
-                modifier = Modifier
-                    .clip(shape = RoundedCornerShape(10.dp))
-                    .background(color = Color.LightGray)
-                    .padding(5.dp)
-            )
+            Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.Start) {
+                Text(
+                    text = "Hold: $strong",
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(10.dp))
+                        .background(color = Color.LightGray)
+                        .padding(5.dp)
+                )
+            }
         }
         Spacer(modifier = Modifier.height(10.dp))
 

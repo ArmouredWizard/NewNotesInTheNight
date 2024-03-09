@@ -50,7 +50,7 @@ fun NameAndDescrEntryDialog(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(10.dp),
+                    .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TitleBlock(title = "", text = title)

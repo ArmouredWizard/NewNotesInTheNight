@@ -269,11 +269,6 @@ fun ScoundrelDetails(
             }//end Box
 
 
-            CoinBlock(
-                scoundrelDetails = scoundrel,
-            )
-
-
         }//end IF ATTRIBUTES
         Spacer(Modifier.height(10.dp))
 
@@ -396,10 +391,9 @@ fun ScoundrelDetails(
 
           var showXpBlock by remember { mutableStateOf(false) }
 
-       // val contactList = scoundrel.contacts
         MyButton(
             onClick = { showXpBlock = !showXpBlock },
-            text = "XP Tracks",
+            text = "Coin and XP Tracks",
             trailingIcon = if (showXpBlock) {
                 Icons.Default.KeyboardArrowUp
             } else {
@@ -412,19 +406,21 @@ fun ScoundrelDetails(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
+                CoinBlock(
+                    scoundrelDetails = scoundrel,
+                )
+
                 XpBlock(
                     xpTracks = listOf(
                         Pair("Insight", scoundrel.insightXp),
                         Pair("Prowess", scoundrel.prowessXp),
                         Pair("Resolve", scoundrel.resolveXp),
-                        //    Pair("Playbook", scoundrelDetails.playbookXp)
                     ),
-
                     xpTotal = 6
                 )
                 XpBlock(
                     xpTracks = listOf(Pair("Playbook", scoundrel.playbookXp)),
-
                     xpTotal = 8,
                 )
             }

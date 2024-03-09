@@ -1,6 +1,7 @@
 package uk.co.maddwarf.notesinthenight.ui.composables.contact
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,6 +51,7 @@ fun ContactWithRatingItem(
     ) {
         Column(
             modifier = Modifier
+                .background(Color.LightGray)
                 .padding(10.dp)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp)
